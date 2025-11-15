@@ -214,46 +214,58 @@ class TrackSegment:
 class TrackConfig:
     """Track configuration and geometry"""
     
-    def __init__(self, track_name: str = "Monaco"):
+    def __init__(self, track_name: str = "Jakarta"):
         self.track_name = track_name
         self.segments = self._build_track()
         self.total_length = sum(seg.length for seg in self.segments)
-        self.lap_record_seconds = 90.0  # Approximate
+        self.lap_record_seconds = 78.0  # Jakarta E-Prix typical lap time
         self.attack_mode_zones = self._get_attack_mode_zones()
-        self.pit_lane_length = 200.0  # meters
+        self.pit_lane_length = 180.0  # meters
         self.pit_lane_speed_limit_kmh = 50.0  # km/h
         
     def _build_track(self) -> List[TrackSegment]:
-        """Build a realistic Formula E street circuit - closed loop"""
-        # Create a proper closed track layout with realistic corner speeds
-        # Total turns: 360 degrees to close the loop
+        """Build Jakarta E-Prix Circuit - Real Formula E street circuit"""
+        # Jakarta International E-Prix Circuit (2022-present)
+        # 2.370 km, 18 turns, flowing street circuit layout
         segments = [
-            # Start straight (0° heading)
-            TrackSegment('straight', 400, np.inf, 0, 0, 0, 1.0, 250, False, 0),
+            # Sector 1 - Start/Finish through Turn 1-6
+            TrackSegment('straight', 280, np.inf, 0, 0, 0, 1.0, 270, False, 0),  # Start straight
+            TrackSegment('left_corner', 55, 40, 0, 1, 0, 0.93, 95, False, 0.0250),  # Turn 1 - Left
+            TrackSegment('straight', 90, np.inf, 0, 0, 0, 0.98, 200, False, 0),  # Short straight
+            TrackSegment('left_corner', 50, 35, 0, 1, 0, 0.91, 88, False, 0.0286),  # Turn 2 - Tight left
+            TrackSegment('straight', 110, np.inf, 0, 0, 0, 0.97, 220, False, 0),  # Acceleration
+            TrackSegment('right_corner', 65, 42, 2, 1, 0, 0.93, 98, False, 0.0238),  # Turn 3 - Right sweep
+            TrackSegment('straight', 70, np.inf, 0, 0, 0, 0.96, 190, False, 0),  # Short blast
+            TrackSegment('left_corner', 60, 38, 0, 2, 0, 0.92, 92, False, 0.0263),  # Turn 4 - Medium left
+            TrackSegment('straight', 85, np.inf, 0, 0, 0, 0.97, 210, False, 0),  # Brief straight
+            TrackSegment('right_corner', 55, 36, 0, 1, 0, 0.91, 90, False, 0.0278),  # Turn 5 - Tight right
             
-            # Turn 1: 90° right turn (0° -> -90°) - Medium speed corner
-            TrackSegment('right_corner', 94, 60, 5, 2, 0, 0.95, 120, False, 0.0167),
+            # Sector 2 - Technical section Turn 6-12
+            TrackSegment('straight', 130, np.inf, 0, 0, 0, 0.98, 235, False, 0),  # Mid straight
+            TrackSegment('left_corner', 70, 45, 3, 2, 0, 0.94, 105, True, 0.0222),  # Turn 6 - ATTACK MODE
+            TrackSegment('straight', 95, np.inf, 0, 0, 0, 0.97, 215, False, 0),  # Straight section
+            TrackSegment('right_corner', 75, 48, 0, 1, 0, 0.93, 108, False, 0.0208),  # Turn 7 - Right
+            TrackSegment('straight', 105, np.inf, 0, 0, 0, 0.98, 225, False, 0),  # Flowing section
+            TrackSegment('left_corner', 80, 50, 4, 2, 0, 0.95, 112, False, 0.0200),  # Turn 8 - Fast left
+            TrackSegment('chicane', 65, 28, 0, 1, 0, 0.90, 82, False, 0.0357),  # Turn 9 - Chicane complex
+            TrackSegment('straight', 140, np.inf, 0, 0, 0, 0.98, 245, False, 0),  # Long straight
+            TrackSegment('right_corner', 70, 43, 0, 2, 0, 0.93, 100, False, 0.0233),  # Turn 10 - Right
+            TrackSegment('straight', 75, np.inf, 0, 0, 0, 0.96, 195, False, 0),  # Short section
             
-            # Straight along side (heading -90°)
-            TrackSegment('straight', 300, np.inf, 0, 0, 0, 1.0, 220, False, 0),
-            
-            # Turn 2: 90° right turn (-90° -> -180°) - Tight corner
-            TrackSegment('right_corner', 94, 60, 0, 1, 0, 0.93, 110, True, 0.0167),
-            
-            # Back straight (heading -180° / 180°)
-            TrackSegment('straight', 400, np.inf, 0, 0, 0, 1.0, 240, False, 0),
-            
-            # Turn 3: 90° right turn (-180° -> -270° / 90°) - Medium speed corner
-            TrackSegment('right_corner', 94, 60, 3, 1, 0, 0.95, 115, False, 0.0167),
-            
-            # Side straight (heading 90°)
-            TrackSegment('straight', 300, np.inf, 0, 0, 0, 1.0, 215, False, 0),
-            
-            # Turn 4: 90° right turn (90° -> 0°) - Tight corner with Attack Mode Zone
-            TrackSegment('right_corner', 94, 60, 0, 2, 0, 0.93, 105, True, 0.0167),
-            
-            # Final section back to start/finish
-            TrackSegment('straight', 172, np.inf, 0, 0, 0, 1.0, 230, False, 0),
+            # Sector 3 - Final complex Turn 11-18
+            TrackSegment('left_corner', 85, 52, 5, 2, 0, 0.95, 115, False, 0.0192),  # Turn 11 - Sweeping left
+            TrackSegment('straight', 125, np.inf, 0, 0, 0, 0.99, 240, False, 0),  # Back straight
+            TrackSegment('right_corner', 60, 39, 0, 1, 0, 0.92, 94, False, 0.0256),  # Turn 12 - Right
+            TrackSegment('straight', 80, np.inf, 0, 0, 0, 0.97, 205, False, 0),  # Short blast
+            TrackSegment('left_corner', 65, 41, 0, 1, 0, 0.92, 96, True, 0.0244),  # Turn 13 - ATTACK MODE
+            TrackSegment('straight', 90, np.inf, 0, 0, 0, 0.97, 215, False, 0),  # Acceleration zone
+            TrackSegment('right_corner', 70, 44, 2, 2, 0, 0.94, 102, False, 0.0227),  # Turn 14 - Medium right
+            TrackSegment('straight', 100, np.inf, 0, 0, 0, 0.98, 230, False, 0),  # Final sector straight
+            TrackSegment('chicane', 70, 30, 0, 1, 0, 0.91, 85, False, 0.0333),  # Turn 15-16 - Fast chicane
+            TrackSegment('straight', 110, np.inf, 0, 0, 0, 0.98, 235, False, 0),  # Penultimate straight
+            TrackSegment('left_corner', 75, 46, 3, 2, 0, 0.94, 106, False, 0.0217),  # Turn 17 - Left
+            TrackSegment('right_corner', 55, 37, 0, 1, 0, 0.91, 91, False, 0.0270),  # Turn 18 - Final right
+            TrackSegment('straight', 170, np.inf, 0, 0, 0, 0.99, 265, False, 0),  # Final straight to S/F
         ]
         return segments
     

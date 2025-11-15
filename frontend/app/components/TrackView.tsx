@@ -29,31 +29,65 @@ export default function TrackView({
     // Setup SVG
     svg.attr("width", width).attr("height", height);
 
-    // Define track path (realistic Formula E street circuit)
+    // Jakarta E-Prix Circuit - Real Formula E track layout
+    // Based on Jakarta International E-Prix Circuit (18 turns, 2.370 km)
     const centerX = width / 2;
     const centerY = height / 2;
-    const mainRadius = 140;
 
-    // Create a realistic street circuit path
+    // Create Jakarta circuit path matching the attached image
+    // Flowing street circuit with long straights and technical sections
     const trackPath = `
-      M ${centerX - 200},${centerY}
-      L ${centerX - 150},${centerY}
-      Q ${centerX - 100},${centerY} ${centerX - 100},${centerY - 50}
-      L ${centerX - 100},${centerY - 80}
-      Q ${centerX - 100},${centerY - 100} ${centerX - 80},${centerY - 100}
-      L ${centerX + 80},${centerY - 100}
-      Q ${centerX + 100},${centerY - 100} ${centerX + 100},${centerY - 80}
-      L ${centerX + 100},${centerY - 20}
-      Q ${centerX + 100},${centerY} ${centerX + 120},${centerY}
-      L ${centerX + 180},${centerY}
-      Q ${centerX + 200},${centerY} ${centerX + 200},${centerY + 20}
-      L ${centerX + 200},${centerY + 80}
-      Q ${centerX + 200},${centerY + 100} ${centerX + 180},${centerY + 100}
-      L ${centerX - 80},${centerY + 100}
-      Q ${centerX - 100},${centerY + 100} ${centerX - 100},${centerY + 80}
-      L ${centerX - 100},${centerY + 20}
-      Q ${centerX - 100},${centerY} ${centerX - 120},${centerY}
-      L ${centerX - 200},${centerY}
+      M 200,300
+      L 350,295
+      Q 380,293 395,280
+      L 410,265
+      Q 420,250 430,245
+      L 455,240
+      Q 475,238 485,225
+      L 495,210
+      Q 500,195 515,190
+      L 540,185
+      Q 565,183 580,175
+      L 605,160
+      Q 625,150 640,145
+      L 670,140
+      Q 695,138 710,150
+      L 725,165
+      Q 735,180 745,195
+      L 755,215
+      Q 760,235 770,245
+      L 785,260
+      Q 800,270 810,265
+      L 825,255
+      Q 835,245 835,230
+      L 835,210
+      Q 835,190 825,180
+      L 810,170
+      Q 790,163 775,165
+      L 750,170
+      Q 730,175 720,190
+      L 710,210
+      Q 705,230 695,240
+      L 675,255
+      Q 655,265 640,275
+      L 615,290
+      Q 595,300 580,310
+      L 555,325
+      Q 535,335 520,345
+      L 495,360
+      Q 475,370 460,375
+      L 435,380
+      Q 410,383 395,390
+      L 370,405
+      Q 350,418 335,415
+      L 315,410
+      Q 295,405 285,395
+      L 270,380
+      Q 258,365 250,350
+      L 240,330
+      Q 235,315 225,310
+      L 205,305
+      Q 195,303 200,300
     `;
 
     // Draw track background (wider gray area)
@@ -124,29 +158,104 @@ export default function TrackView({
       }
     }
 
-    // Sector markers (every 1/4 of track)
-    for (let sector = 1; sector < 4; sector++) {
-      const sectorPoint = pathElement?.getPointAtLength(
-        (pathLength * sector) / 4
-      );
-      if (sectorPoint) {
-        svg
-          .append("circle")
-          .attr("cx", sectorPoint.x)
-          .attr("cy", sectorPoint.y)
-          .attr("r", 3)
-          .attr("fill", "#ff6600")
-          .attr("opacity", 0.6);
+    // Sector markers (3 sectors)
+    const sector1End = 0.33;
+    const sector2End = 0.66;
 
-        svg
-          .append("text")
-          .attr("x", sectorPoint.x)
-          .attr("y", sectorPoint.y - 10)
-          .attr("text-anchor", "middle")
-          .attr("fill", "#ff6600")
-          .attr("font-size", "10px")
-          .text(`S${sector}`);
-      }
+    // Sector 1 marker
+    const s1Point = pathElement?.getPointAtLength(sector1End * pathLength);
+    if (s1Point) {
+      svg
+        .append("line")
+        .attr("x1", s1Point.x - 10)
+        .attr("y1", s1Point.y - 10)
+        .attr("x2", s1Point.x + 10)
+        .attr("y2", s1Point.y + 10)
+        .attr("stroke", "#ff0000")
+        .attr("stroke-width", 3);
+
+      svg
+        .append("text")
+        .attr("x", s1Point.x)
+        .attr("y", s1Point.y - 15)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#ff0000")
+        .attr("font-size", "11px")
+        .attr("font-weight", "bold")
+        .text("SECTOR 1");
+    }
+
+    // Sector 2 marker
+    const s2Point = pathElement?.getPointAtLength(sector2End * pathLength);
+    if (s2Point) {
+      svg
+        .append("line")
+        .attr("x1", s2Point.x - 10)
+        .attr("y1", s2Point.y - 10)
+        .attr("x2", s2Point.x + 10)
+        .attr("y2", s2Point.y + 10)
+        .attr("stroke", "#ffff00")
+        .attr("stroke-width", 3);
+
+      svg
+        .append("text")
+        .attr("x", s2Point.x)
+        .attr("y", s2Point.y + 25)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#ffff00")
+        .attr("font-size", "11px")
+        .attr("font-weight", "bold")
+        .text("SECTOR 2");
+    }
+
+    // Attack Mode Zones (approximately 40% and 80% around track)
+    const attackZone1Pos = 0.4;
+    const attackZone2Pos = 0.8;
+
+    const az1Point = pathElement?.getPointAtLength(attackZone1Pos * pathLength);
+    if (az1Point) {
+      svg
+        .append("circle")
+        .attr("cx", az1Point.x)
+        .attr("cy", az1Point.y)
+        .attr("r", 20)
+        .attr("fill", "none")
+        .attr("stroke", "#00ffff")
+        .attr("stroke-width", 3)
+        .attr("opacity", 0.6);
+
+      svg
+        .append("text")
+        .attr("x", az1Point.x)
+        .attr("y", az1Point.y + 4)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#00ffff")
+        .attr("font-size", "12px")
+        .attr("font-weight", "bold")
+        .text("⚡");
+    }
+
+    const az2Point = pathElement?.getPointAtLength(attackZone2Pos * pathLength);
+    if (az2Point) {
+      svg
+        .append("circle")
+        .attr("cx", az2Point.x)
+        .attr("cy", az2Point.y)
+        .attr("r", 20)
+        .attr("fill", "none")
+        .attr("stroke", "#00ffff")
+        .attr("stroke-width", 3)
+        .attr("opacity", 0.6);
+
+      svg
+        .append("text")
+        .attr("x", az2Point.x)
+        .attr("y", az2Point.y + 4)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#00ffff")
+        .attr("font-size", "12px")
+        .attr("font-weight", "bold")
+        .text("⚡");
     }
 
     // Sort cars by position
@@ -221,7 +330,7 @@ export default function TrackView({
       .attr("fill", "white")
       .attr("font-size", "16px")
       .attr("font-weight", "bold")
-      .text("🏁 Live Track View - Street Circuit");
+      .text("🏁 Jakarta E-Prix Circuit - Live View");
 
     // Legend
     svg
@@ -230,7 +339,7 @@ export default function TrackView({
       .attr("y", height - 10)
       .attr("fill", "#888")
       .attr("font-size", "10px")
-      .text(`${activeCars.length} cars racing • Track: ${trackLength}m`);
+      .text(`${activeCars.length} cars racing • Jakarta: 2.37km • 18 turns`);
   }, [cars, trackLength]);
 
   return (

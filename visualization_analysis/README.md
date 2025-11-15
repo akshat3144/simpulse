@@ -140,12 +140,10 @@ visualization_analysis/
 
 - **Purpose**: Verify lap timing consistency
 - **What to look for**:
-  - Lap times should be relatively consistent per car
-  - Variation is normal (traffic, battery level, tires)
-  - Typical range: 30-40 seconds per lap for 2.5km track
-  - Bar chart shows average lap time comparison
-
-### 9. Race Snapshot (`9_race_snapshot.png`)
+- Lap times should be relatively consistent per car
+- Variation is normal (traffic, battery level, tires)
+- Typical range: 78-90 seconds per lap for 2.98km track (Jakarta)
+- Bar chart shows average lap time comparison### 9. Race Snapshot (`9_race_snapshot.png`)
 
 - **Purpose**: Visualize race spread at a moment in time
 - **What to look for**:
@@ -431,10 +429,10 @@ The simulation is working correctly if:
 
 ### Track Geometry
 
-- **Track Length:** 2,500m per lap
-- **Track Width:** ~370m (from Y-axis range)
-- **Track Layout:** Monaco-style street circuit
-- **Segments:** 10 (straights, left corners, right corners, chicanes)
+- **Track Length:** 2,980m per lap (Jakarta E-Prix Circuit)
+- **Track Width:** Varies (street circuit)
+- **Track Layout:** Jakarta street circuit with flowing corners
+- **Segments:** 33 (18 turns, straights, chicanes, attack zones)
 
 ### Physics Engine Validation
 
@@ -454,7 +452,7 @@ The simulation is working correctly if:
 
 ### Race Realism
 
-- Lap times: Consistent and realistic for 2.5km track
+- Lap times: Consistent and realistic for 2.98km track (78s lap record)
 - Position changes: Overtakes occur naturally
 - Battery management: Cars finish with remaining energy
 - Tire wear: Manageable throughout race
