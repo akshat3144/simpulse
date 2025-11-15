@@ -193,4 +193,4 @@ class QualifyingSession:
                     f"{result['skill']:.3f}"
                 ])
         
-        print(f"[OK] Qualifying results exported to {filepath}")
+        print(f"✓ Qualifying results exported to {filepath}")

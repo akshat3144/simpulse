@@ -91,10 +91,8 @@ def main():
     print(f"Initial Weather: {weather_system.get_weather_description()}")
     print()
     
-    # Apply starting grid from qualifying to race engine
-    print("Applying qualifying results to starting grid...")
-    engine.set_starting_grid(starting_grid)
-    print()
+    # Reorder cars based on qualifying
+    # (In a full implementation, this would be done in the engine initialization)
     
     print("Starting race...")
     print()
@@ -135,12 +133,12 @@ def main():
             print(f"Grip multiplier: {weather_system.state.grip_multiplier:.3f}")
             
             if race_control.safety_car_active:
-                print("[!] SAFETY CAR DEPLOYED")
+                print("⚠️  SAFETY CAR DEPLOYED")
             
             print("\nCurrent Standings:")
             for i, entry in enumerate(leaderboard[:5]):
-                status = "[OK]" if entry.get('status') == 'Running' else "[DNF]"
-                attack = "[ATK]" if entry.get('attack_mode_active', False) else "     "
+                status = "🟢" if entry.get('status') == 'Running' else "🔴"
+                attack = "⚡" if entry.get('attack_mode_active', False) else "  "
                 print(f"  {status} P{i+1}. {entry['driver_name']:30s} - "
                       f"Lap {entry['current_lap']}, "
                       f"Speed: {entry['speed_kmh']:3.0f} km/h, "
@@ -154,7 +152,7 @@ def main():
         
         # Check if race finished (when leader completes required laps)
         if engine.race_finished:
-            print(f"\n[FINISH] RACE FINISHED at {engine.race_state.current_time:.1f}s")
+            print(f"\n🏁 RACE FINISHED at {engine.race_state.current_time:.1f}s")
             break
     
     # =======================
@@ -235,7 +233,7 @@ def main():
     engine.export_to_csv(f"{output_dir}/final_leaderboard.csv")
     
     print("\n" + "="*80)
-    print("[SUCCESS] RACE WEEKEND COMPLETE!")
+    print("✓ RACE WEEKEND COMPLETE!")
     print("="*80)
     print(f"\nAll data exported to: {output_dir}/")
     print("\nFiles created:")
