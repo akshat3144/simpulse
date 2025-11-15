@@ -409,4 +409,4 @@ class RaceControlSystem:
                     'Yes' if penalty.served else 'No'
                 ])
         
-        print(f"✓ Penalties exported to {filepath}")
+        print(f"[OK] Penalties exported to {filepath}")

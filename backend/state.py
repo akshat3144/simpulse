@@ -4,7 +4,7 @@ Implements high-dimensional vector space framework for complete race state
 """
 
 import numpy as np
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, List
 from dataclasses import dataclass, field
 
 
@@ -283,6 +283,32 @@ class RaceState:
         self.safety_car_active = False
         self.race_started = False
         self.race_finished = False
+    
+    def reorder_cars(self, grid_order: List[int]):
+        """
+        Reorder cars based on qualifying grid positions
+        
+        Args:
+            grid_order: List of original car IDs in new grid order
+                       e.g., [5, 2, 8, ...] means car 5 → P1, car 2 → P2, etc.
+        """
+        # Create mapping from old car_id to car object
+        car_map = {car.car_id: car for car in self.cars}
+        
+        # Reorder cars list based on grid
+        reordered_cars = []
+        for new_position, original_car_id in enumerate(grid_order):
+            car = car_map[original_car_id]
+            
+            # Update car attributes for new grid position
+            car.car_id = new_position  # Reassign car_id to match new position
+            car.position = new_position + 1  # Starting position (1-indexed)
+            car.position_x = -new_position * 8.0  # Stagger starting positions
+            
+            reordered_cars.append(car)
+        
+        # Replace the cars list
+        self.cars = reordered_cars
         
     def get_state_matrix(self) -> np.ndarray:
         """

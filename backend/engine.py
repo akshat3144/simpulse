@@ -69,7 +69,7 @@ class FormulaERaceEngine:
         
         # Initialize race state
         self.race_state = RaceState(num_cars, self.driver_configs)
-        self.starting_grid = [i + 1 for i in range(num_cars)]
+        self.starting_grid = [i + 1 for i in range(num_cars)]  # Default grid order (will be updated by qualifying)
         
         # Initialize subsystems
         self.physics_engine = PhysicsEngine(self.track_config)
@@ -94,6 +94,33 @@ class FormulaERaceEngine:
         # Performance tracking
         self.simulation_start_time = None
         self.real_time_factor = 0.0
+    
+    def set_starting_grid(self, grid_order: List[int]):
+        """
+        Set the starting grid order based on qualifying results
+        
+        Args:
+            grid_order: List of car IDs in grid order (P1, P2, P3, ...)
+                       e.g., [5, 2, 8, ...] means car 5 is P1, car 2 is P2, etc.
+        """
+        if len(grid_order) != self.num_cars:
+            raise ValueError(f"Grid order must contain {self.num_cars} cars, got {len(grid_order)}")
+        
+        # Store the grid order
+        self.starting_grid = [pos + 1 for pos in range(len(grid_order))]  # [1, 2, 3, ...]
+        
+        # Reorder the cars list based on qualifying
+        self.race_state.reorder_cars(grid_order)
+        
+        # Update driver configs to match new order
+        original_configs = self.driver_configs.copy()
+        original_car_configs = self.car_configs.copy()
+        
+        for new_idx, original_car_id in enumerate(grid_order):
+            self.driver_configs[new_idx] = original_configs[original_car_id]
+            self.car_configs[new_idx] = original_car_configs[original_car_id]
+        
+        print(f"[OK] Starting grid set: {len(grid_order)} cars reordered")
         
     def simulate_timestep(self, dt: Optional[float] = None) -> Tuple[np.ndarray, List[Dict], List[Dict]]:
         """
