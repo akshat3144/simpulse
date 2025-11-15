@@ -5,7 +5,7 @@
     "total_distance_km": 37.5,
     "num_cars": 20,
     "race_time_seconds": 337.60000000000827,
-    "simulation_speed": "42.8x real-time"
+    "simulation_speed": "44.1x real-time"
   },
   "final_standings": {
     "entries": [
@@ -318,7 +318,7 @@
     "finished_cars": 0,
     "retired_cars": 20,
     "total_overtakes": 0,
-    "average_speed_kmh": 157.09752676635017,
+    "average_speed_kmh": 157.09752676635054,
     "fastest_lap": 90.0,
     "driver_ratings": {
       "Driver 1": 30.0,

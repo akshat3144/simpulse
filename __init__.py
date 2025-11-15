@@ -17,6 +17,16 @@ from .physics import PhysicsEngine, MotionModel, EnergyModel, TireModel
 from .events import EventGenerator, StrategyDecisionMaker
 from .ml_strategy import RacingLinePredictor, EnergyManagementQLearning, MLStrategyCoordinator
 
+# Visualization (optional import - requires matplotlib)
+try:
+    from .visualization import RaceVisualizer, LiveRaceAnimator, create_post_race_analysis
+    _has_visualization = True
+except ImportError:
+    _has_visualization = False
+    RaceVisualizer = None
+    LiveRaceAnimator = None
+    create_post_race_analysis = None
+
 __version__ = "1.0.0"
 __author__ = "Formula E Simulator Team"
 
@@ -53,4 +63,9 @@ __all__ = [
     'RacingLinePredictor',
     'EnergyManagementQLearning',
     'MLStrategyCoordinator',
+    
+    # Visualization (optional)
+    'RaceVisualizer',
+    'LiveRaceAnimator',
+    'create_post_race_analysis',
 ]
