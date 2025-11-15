@@ -38,6 +38,8 @@ connected_clients: List[WebSocket] = []
 
 def serialize_car(car: CarState) -> Dict[str, Any]:
     """Convert CarState to JSON-serializable dict"""
+    import math
+    
     return {
         "id": car.car_id,
         "driver_name": car.driver_name,
@@ -57,11 +59,11 @@ def serialize_car(car: CarState) -> Dict[str, Any]:
         "attack_mode_active": car.attack_mode_active,
         "attack_mode_remaining": car.attack_mode_remaining,
         "attack_mode_uses_left": car.attack_mode_uses_left,
-        "last_lap_time": car.last_lap_time,
-        "best_lap_time": car.best_lap_time,
+        "last_lap_time": car.last_lap_time if not math.isinf(car.last_lap_time) else None,
+        "best_lap_time": car.best_lap_time if not math.isinf(car.best_lap_time) else None,
         "is_active": car.is_active,
-        "gap_to_leader": car.gap_to_leader,
-        "gap_to_ahead": car.gap_to_ahead,
+        "gap_to_leader": car.gap_to_leader if not math.isinf(car.gap_to_leader) else None,
+        "gap_to_ahead": car.gap_to_ahead if not math.isinf(car.gap_to_ahead) else None,
         "total_energy_consumed": car.total_energy_consumed,
         "max_speed_achieved": car.max_speed_achieved,
         "overtakes_made": car.overtakes_made,
@@ -83,9 +85,12 @@ def serialize_race_state(state: RaceState) -> Dict[str, Any]:
     for i, car in enumerate(sorted_cars):
         car["position"] = i + 1
     
+    # Get current lap from leader (or 0 if no active cars)
+    current_lap = sorted_cars[0]["current_lap"] if sorted_cars else 0
+    
     return {
         "current_time": state.current_time,
-        "current_lap": state.current_lap,
+        "current_lap": current_lap,
         "cars": cars,
         "leaderboard": sorted_cars[:10],  # Top 10
         "active_cars": len([c for c in cars if c["is_active"]]),
