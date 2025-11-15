@@ -1,0 +1,148 @@
+============================================================
+FORMULA E SIMULATION STATISTICS
+============================================================
+
+RACE OVERVIEW
+----------------------------------------
+Total Race Time: 444.45 seconds
+Number of Cars: 10
+Total Timesteps: 88890
+Timesteps per Car: 8889
+Average dt: 0.0500 seconds
+
+POSITION STATISTICS
+----------------------------------------
+Position X Range: -100.48 to 500.24 m
+Position Y Range: -500.64 to 0.00 m
+Total Track Span: 781.99 m
+
+SPEED STATISTICS
+----------------------------------------
+Min Speed: 3.20 km/h
+Max Speed: 291.90 km/h
+Average Speed: 266.79 km/h
+Speed Std Dev: 22.05 km/h
+
+STEERING STATISTICS
+----------------------------------------
+Max Left Steering: -0.29°
+Max Right Steering: 2.23°
+Non-zero Steering: 56360 / 88890 timesteps (63.4%)
+
+ENERGY STATISTICS
+----------------------------------------
+Car 0:
+  Energy Consumed: 28.764 kWh
+  Energy Regenerated: 2.753 kWh
+  Net Energy: 26.011 kWh
+  Final SOC: 4900.0%
+Car 1:
+  Energy Consumed: 28.767 kWh
+  Energy Regenerated: 2.706 kWh
+  Net Energy: 26.061 kWh
+  Final SOC: 4890.0%
+Car 2:
+  Energy Consumed: 28.008 kWh
+  Energy Regenerated: 2.683 kWh
+  Net Energy: 25.325 kWh
+  Final SOC: 5030.0%
+Car 3:
+  Energy Consumed: 29.042 kWh
+  Energy Regenerated: 2.867 kWh
+  Net Energy: 26.175 kWh
+  Final SOC: 4870.0%
+Car 4:
+  Energy Consumed: 28.906 kWh
+  Energy Regenerated: 2.658 kWh
+  Net Energy: 26.247 kWh
+  Final SOC: 4850.0%
+Car 5:
+  Energy Consumed: 28.553 kWh
+  Energy Regenerated: 2.747 kWh
+  Net Energy: 25.806 kWh
+  Final SOC: 4940.0%
+Car 6:
+  Energy Consumed: 28.794 kWh
+  Energy Regenerated: 2.778 kWh
+  Net Energy: 26.017 kWh
+  Final SOC: 4900.0%
+Car 7:
+  Energy Consumed: 28.475 kWh
+  Energy Regenerated: 2.733 kWh
+  Net Energy: 25.742 kWh
+  Final SOC: 4950.0%
+Car 8:
+  Energy Consumed: 29.717 kWh
+  Energy Regenerated: 2.761 kWh
+  Net Energy: 26.956 kWh
+  Final SOC: 4710.0%
+Car 9:
+  Energy Consumed: 28.642 kWh
+  Energy Regenerated: 2.775 kWh
+  Net Energy: 25.867 kWh
+  Final SOC: 4930.0%
+
+BATTERY TEMPERATURE
+----------------------------------------
+Min Temperature: 40.00°C
+Max Temperature: 43.30°C
+Average Temperature: 41.97°C
+
+TIRE DEGRADATION
+----------------------------------------
+Car 0: 0.43%
+Car 1: 0.44%
+Car 2: 0.44%
+Car 3: 0.44%
+Car 4: 0.44%
+Car 5: 0.43%
+Car 6: 0.44%
+Car 7: 0.43%
+Car 8: 0.44%
+Car 9: 0.44%
+
+ATTACK MODE USAGE
+----------------------------------------
+Car 0:
+  Activations: 2
+  Total Active Time: 419.6 seconds
+Car 1:
+  Activations: 2
+  Total Active Time: 420.2 seconds
+Car 2:
+  Activations: 2
+  Total Active Time: 420.0 seconds
+Car 3:
+  Activations: 2
+  Total Active Time: 420.3 seconds
+Car 4:
+  Activations: 2
+  Total Active Time: 420.3 seconds
+Car 5:
+  Activations: 2
+  Total Active Time: 419.0 seconds
+Car 6:
+  Activations: 2
+  Total Active Time: 404.4 seconds
+Car 7:
+  Activations: 2
+  Total Active Time: 418.8 seconds
+Car 8:
+  Activations: 2
+  Total Active Time: 419.9 seconds
+Car 9:
+  Activations: 2
+  Total Active Time: 418.8 seconds
+
+FINAL CLASSIFICATION
+----------------------------------------
+P1: Car 3 - 15 laps
+P2: Car 1 - 15 laps
+P3: Car 4 - 14 laps
+P4: Car 6 - 14 laps
+P5: Car 8 - 14 laps
+P6: Car 2 - 14 laps
+P7: Car 0 - 14 laps
+P8: Car 5 - 14 laps
+P9: Car 9 - 14 laps
+P10: Car 7 - 14 laps

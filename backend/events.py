@@ -292,7 +292,7 @@ class StrategyDecisionMaker:
         track_segment_type: str
     ) -> bool:
         """
-        Multi-armed bandit approach to attack mode activation
+        Strategic attack mode activation - only in key moments
         
         Args:
             car: Current car state
@@ -307,42 +307,41 @@ class StrategyDecisionMaker:
         if car.attack_mode_uses_left == 0 or car.attack_mode_active:
             return False
         
-        # Score different scenarios
-        scores = []
+        # Strategic conditions - must meet multiple criteria
         
-        # Scenario 1: Close to car ahead, use it now
-        if gap_to_ahead < 1.5 and track_segment_type == 'straight':
-            scores.append(0.9)
-        else:
-            scores.append(0.1)
+        # 1. Battery must be sufficient
+        if car.battery_percentage < 40:
+            return False
         
-        # Scenario 2: Save for later in race
-        if laps_remaining < 5:
-            scores.append(0.7)
-        else:
-            scores.append(0.3)
+        # 2. Only activate in specific race situations
         
-        # Scenario 3: Use when in competitive position
-        if 2 <= position <= 8:
-            scores.append(0.6)
-        else:
-            scores.append(0.2)
+        # Strategy A: Attack near end of race (last 30% of laps)
+        race_progress = 1.0 - (laps_remaining / 15.0)  # Assuming ~15 lap race
+        in_final_phase = race_progress > 0.7
         
-        # Scenario 4: Have enough energy
-        if car.battery_percentage > 50:
-            scores.append(0.5)
-        else:
-            scores.append(0.1)
+        # Strategy B: Close battle - within 2 seconds of car ahead
+        close_battle = gap_to_ahead < 2.0 and gap_to_ahead > 0.1
         
-        # Weighted average of scenarios
-        combined_score = np.mean(scores)
+        # Strategy C: Good position to fight (2nd to 6th)
+        competitive_position = 2 <= position <= 6
         
-        # Random exploration (epsilon-greedy)
-        if self.rng.random() < 0.1:
-            return self.rng.random() < 0.2
+        # Strategy D: On a straight (best place to use power)
+        on_straight = track_segment_type == 'straight'
         
-        # Activation decision
-        return self.rng.random() < combined_score
+        # Decision logic: Need at least 2 key conditions
+        conditions_met = sum([
+            in_final_phase,
+            close_battle and on_straight,
+            competitive_position and close_battle,
+            car.battery_percentage > 60 and laps_remaining < 3
+        ])
+        
+        # Only activate if strong strategic reason (low probability)
+        if conditions_met >= 2:
+            # Even then, only 5% chance per timestep to avoid spam
+            return self.rng.random() < 0.05
+        
+        return False
     
     def get_energy_management_strategy(
         self,

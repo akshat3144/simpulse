@@ -56,6 +56,7 @@ class CarState:
     
     # Race status
     is_active: bool = True  # False if crashed/retired
+    dnf_reason: str = ""  # Reason for DNF (Did Not Finish)
     gap_to_leader: float = 0.0  # seconds
     gap_to_ahead: float = 0.0  # seconds
     position: int = 1  # Current race position

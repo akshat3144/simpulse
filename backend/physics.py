@@ -80,30 +80,37 @@ class DriverController:
             # Straight
             base_speed = PhysicsConfig.MAX_SPEED_MS
         else:
-            # Corner: v = sqrt(μ * g * r)
+            # Corner: v = sqrt(μ * g * r) with realistic Formula E limits
             g = PhysicsConfig.GRAVITY
             mu = car.grip_coefficient * segment.grip_level
             
-            # Add banking contribution
+            # Add banking contribution (conservative)
             if segment.banking_angle > 0:
-                mu *= (1.0 + np.tan(np.radians(segment.banking_angle)) * 0.5)
+                mu *= (1.0 + np.tan(np.radians(segment.banking_angle)) * 0.3)
             
-            # Simple downforce approximation (increases effective grip)
-            downforce_factor = 1.0 + (car.get_speed() / 80.0) * 0.2  # Up to 20% more grip from downforce
+            # Realistic downforce contribution (Formula E has moderate downforce)
+            # Limit to 5% boost maximum to keep speeds realistic for street circuits
+            speed_factor = min(car.get_speed() / 80.0, 1.0)
+            downforce_factor = 1.0 + (speed_factor * 0.05)  # Up to 5% more grip
             mu *= downforce_factor
             
             base_speed = np.sqrt(mu * g * segment.radius)
             base_speed = min(base_speed, PhysicsConfig.MAX_SPEED_MS)
         
-        # Attack mode boost
+        # Attack mode boost (only on straights, minimal in corners)
         if car.attack_mode_active:
-            base_speed *= PhysicsConfig.ATTACK_MODE_SPEED_BOOST
+            if segment.radius == np.inf:
+                base_speed *= PhysicsConfig.ATTACK_MODE_SPEED_BOOST
+            else:
+                # Much smaller boost in corners (only ~2%)
+                base_speed *= 1.02
         
-        # Driver skill factor (better drivers can go faster)
-        skilled_speed = base_speed * driver_skill
+        # Driver skill factor (realistic range: 95-105%)
+        skill_multiplier = 0.95 + (driver_skill - 0.95) * 0.5  # Compress to 0.95-1.05 range
+        skilled_speed = base_speed * skill_multiplier
         
-        # Aggression factor (how close to limit)
-        aggression_factor = 0.90 + (driver_aggression * 0.10)  # 90-100% of limit
+        # Aggression factor (how close to limit) - realistic 92-98%
+        aggression_factor = 0.92 + (driver_aggression * 0.06)  # 92-98% of limit
         
         # Race situation adjustments
         if gap_to_ahead < 1.5 and race_position > 1:
@@ -422,10 +429,112 @@ class PhysicsEngine:
         car.brake = brake
         car.steering_angle = steering
         
-        # Update position
+        # Update position along track
         distance_delta = car.get_speed() * dt
-        car.lap_distance += distance_delta
-        car.total_distance += distance_delta
+        
+        # Ensure distance only increases (never decreases)
+        if distance_delta > 0:
+            car.lap_distance += distance_delta
+            car.total_distance += distance_delta
+        
+        # Calculate 2D position from track distance using proper track geometry
+        cumulative = 0.0
+        current_x = 0.0
+        current_y = 0.0
+        angle = 0.0  # Track direction in radians (0 = East, increases counter-clockwise)
+        
+        for seg in self.track_config.segments:
+            if cumulative + seg.length > car.lap_distance:
+                # Car is in this segment
+                local_dist = car.lap_distance - cumulative
+                
+                if seg.segment_type == 'straight':
+                    # Straight section - move in current direction
+                    current_x += local_dist * np.cos(angle)
+                    current_y += local_dist * np.sin(angle)
+                    
+                elif seg.segment_type in ['left_corner', 'right_corner']:
+                    # Corner section - use proper arc geometry
+                    if seg.radius > 1.0:
+                        # Calculate how much of the corner we've traversed
+                        turn_direction = 1 if seg.segment_type == 'left_corner' else -1
+                        
+                        # Total angle swept by this corner
+                        total_angle = seg.length / seg.radius  # radians
+                        
+                        # Angle swept so far in this corner
+                        swept_angle = (local_dist / seg.length) * total_angle
+                        
+                        # Find center of the circular arc
+                        # For left turn: center is 90° left of current direction
+                        # For right turn: center is 90° right of current direction
+                        center_offset_angle = angle + (np.pi / 2) * turn_direction
+                        center_x = current_x + seg.radius * np.cos(center_offset_angle)
+                        center_y = current_y + seg.radius * np.sin(center_offset_angle)
+                        
+                        # New angle after partial turn
+                        new_angle = angle + swept_angle * turn_direction
+                        
+                        # Calculate new position on arc from center
+                        from_center_angle = center_offset_angle + np.pi  # Start 180° from center offset
+                        from_center_angle += swept_angle * turn_direction
+                        
+                        current_x = center_x + seg.radius * np.cos(from_center_angle)
+                        current_y = center_y + seg.radius * np.sin(from_center_angle)
+                        
+                        # Update angle for next segment
+                        angle = new_angle
+                    else:
+                        # Very tight corner or invalid radius - treat as straight
+                        current_x += local_dist * np.cos(angle)
+                        current_y += local_dist * np.sin(angle)
+                        
+                elif seg.segment_type == 'chicane':
+                    # Chicane - approximate as straight with lateral oscillation
+                    forward_dist = local_dist * np.cos(angle)
+                    lateral_offset = 10.0 * np.sin(2.0 * np.pi * local_dist / seg.length)
+                    
+                    current_x += forward_dist - lateral_offset * np.sin(angle)
+                    current_y += local_dist * np.sin(angle) + lateral_offset * np.cos(angle)
+                
+                break
+            else:
+                # Process full segment to update position and angle
+                if seg.segment_type == 'straight':
+                    current_x += seg.length * np.cos(angle)
+                    current_y += seg.length * np.sin(angle)
+                    # Angle stays the same
+                    
+                elif seg.segment_type in ['left_corner', 'right_corner']:
+                    if seg.radius > 1.0:
+                        turn_direction = 1 if seg.segment_type == 'left_corner' else -1
+                        total_angle = seg.length / seg.radius
+                        
+                        # Find arc center
+                        center_offset_angle = angle + (np.pi / 2) * turn_direction
+                        center_x = current_x + seg.radius * np.cos(center_offset_angle)
+                        center_y = current_y + seg.radius * np.sin(center_offset_angle)
+                        
+                        # Update angle for full corner
+                        angle += total_angle * turn_direction
+                        
+                        # Calculate end position
+                        from_center_angle = center_offset_angle + np.pi + total_angle * turn_direction
+                        current_x = center_x + seg.radius * np.cos(from_center_angle)
+                        current_y = center_y + seg.radius * np.sin(from_center_angle)
+                    else:
+                        current_x += seg.length * np.cos(angle)
+                        current_y += seg.length * np.sin(angle)
+                        
+                elif seg.segment_type == 'chicane':
+                    # Full chicane - treat as straight
+                    current_x += seg.length * np.cos(angle)
+                    current_y += seg.length * np.sin(angle)
+                
+                cumulative += seg.length
+        
+        car.position_x = current_x
+        car.position_y = current_y
         
         # Check lap completion
         if car.lap_distance >= self.track_config.total_length:
@@ -460,10 +569,10 @@ class PhysicsEngine:
         car.total_energy_consumed += energy_consumed
         car.total_energy_regenerated += energy_regen
         
-        # Update tire degradation
-        tire_deg_rate = PhysicsConfig.TIRE_K_BASE
-        tire_deg_rate += PhysicsConfig.TIRE_K_SPEED * (current_speed ** 2)
-        tire_deg_rate += PhysicsConfig.TIRE_K_LATERAL * (abs(a_lat) ** 2)
+        # Update tire degradation (reduced 1000x for realistic race-long wear)
+        tire_deg_rate = PhysicsConfig.TIRE_K_BASE * 0.001
+        tire_deg_rate += PhysicsConfig.TIRE_K_SPEED * (current_speed ** 2) * 0.001
+        tire_deg_rate += PhysicsConfig.TIRE_K_LATERAL * (abs(a_lat) ** 2) * 0.001
         tire_deg_rate *= (1.0 + driver_aggression * 0.3)
         
         car.tire_degradation += tire_deg_rate * dt
@@ -485,16 +594,21 @@ class PhysicsEngine:
         car.tire_temperature -= cooling
         car.tire_temperature = np.clip(car.tire_temperature, self.weather.temperature_air, 130.0)
         
-        # Update battery temperature (simplified)
-        heat_gen = energy_consumed * PhysicsConfig.BATTERY_HEAT_GENERATION_FACTOR / 1000.0
+        # Update battery temperature - increases with usage, cools when idle
+        # Heat generation from power consumption (both motor and regen create heat)
+        power_output = abs(energy_consumed - energy_regen) / dt if dt > 0 else 0
+        heat_gen = power_output / 100000.0  # Scale factor for temperature rise
         car.battery_temperature += heat_gen * dt
         
+        # Active cooling when above optimal temperature
         if car.battery_temperature > PhysicsConfig.BATTERY_OPTIMAL_TEMP:
-            cooling_power = (car.battery_temperature - PhysicsConfig.BATTERY_OPTIMAL_TEMP) * 0.5
-            car.battery_temperature -= cooling_power * dt
+            cooling_rate = (car.battery_temperature - PhysicsConfig.BATTERY_OPTIMAL_TEMP) * 0.8
+            car.battery_temperature -= cooling_rate * dt
         
-        ambient_cool = (car.battery_temperature - self.weather.temperature_air) * 0.02 * dt
-        car.battery_temperature -= ambient_cool
+        # Passive cooling to ambient
+        if car.battery_temperature > self.weather.temperature_air:
+            ambient_cool = (car.battery_temperature - self.weather.temperature_air) * 0.05 * dt
+            car.battery_temperature -= ambient_cool
         
         car.battery_temperature = np.clip(
             car.battery_temperature,

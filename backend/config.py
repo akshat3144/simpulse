@@ -88,7 +88,7 @@ class PhysicsConfig:
     TIRE_K_SPEED: float = 0.0000012  # Speed-dependent degradation
     TIRE_K_LATERAL: float = 0.000015  # Lateral G-force degradation (cornering)
     TIRE_K_LOCK: float = 0.005  # Degradation spike on wheel lock
-    MU_MAX: float = 1.8  # Maximum grip coefficient (new tires, optimal temp)
+    MU_MAX: float = 1.2  # Maximum grip coefficient (Formula E street circuit)
     MU_MIN: float = 0.9  # Minimum grip coefficient (fully worn)
     MU_WET_FACTOR: float = 0.7  # Wet condition grip multiplier
     
@@ -224,28 +224,36 @@ class TrackConfig:
         self.pit_lane_speed_limit_kmh = 50.0  # km/h
         
     def _build_track(self) -> List[TrackSegment]:
-        """Build a realistic Formula E street circuit"""
+        """Build a realistic Formula E street circuit - closed loop"""
+        # Create a proper closed track layout with realistic corner speeds
+        # Total turns: 360 degrees to close the loop
         segments = [
-            # Main straight with slight elevation
-            TrackSegment('straight', 400, np.inf, 0, 0, 2.0, 1.0, 250, False, 0),
-            # Fast right-hander (Turn 1)
-            TrackSegment('right_corner', 150, 50, 5, 2, 0, 0.95, 110, False, 0.02),
-            # Acceleration zone
-            TrackSegment('straight', 300, np.inf, 0, 0, -1.0, 1.0, 220, False, 0),
-            # Tight left (Turn 2) - Attack Mode Zone
-            TrackSegment('left_corner', 120, 35, 0, 1, 0, 0.93, 95, True, 0.0286),
-            # Technical chicane section (Turns 3-4)
-            TrackSegment('chicane', 100, 25, 0, 0, 0, 0.90, 75, False, 0.04),
-            # Long straight with slight downhill
-            TrackSegment('straight', 500, np.inf, 0, 0, -3.0, 1.0, 280, False, 0),
-            # Medium-speed left (Turn 5)
-            TrackSegment('left_corner', 180, 60, 3, 1, 1.0, 0.95, 120, False, 0.0167),
-            # Short straight
-            TrackSegment('straight', 250, np.inf, 0, 0, 0, 1.0, 200, False, 0),
-            # Slow right hairpin (Turn 6) - Attack Mode Zone
-            TrackSegment('right_corner', 140, 40, 0, 2, 0, 0.93, 85, True, 0.025),
-            # Final straight to start/finish
-            TrackSegment('straight', 360, np.inf, 0, 0, 1.0, 1.0, 240, False, 0),
+            # Start straight (0° heading)
+            TrackSegment('straight', 400, np.inf, 0, 0, 0, 1.0, 250, False, 0),
+            
+            # Turn 1: 90° right turn (0° -> -90°) - Medium speed corner
+            TrackSegment('right_corner', 94, 60, 5, 2, 0, 0.95, 120, False, 0.0167),
+            
+            # Straight along side (heading -90°)
+            TrackSegment('straight', 300, np.inf, 0, 0, 0, 1.0, 220, False, 0),
+            
+            # Turn 2: 90° right turn (-90° -> -180°) - Tight corner
+            TrackSegment('right_corner', 94, 60, 0, 1, 0, 0.93, 110, True, 0.0167),
+            
+            # Back straight (heading -180° / 180°)
+            TrackSegment('straight', 400, np.inf, 0, 0, 0, 1.0, 240, False, 0),
+            
+            # Turn 3: 90° right turn (-180° -> -270° / 90°) - Medium speed corner
+            TrackSegment('right_corner', 94, 60, 3, 1, 0, 0.95, 115, False, 0.0167),
+            
+            # Side straight (heading 90°)
+            TrackSegment('straight', 300, np.inf, 0, 0, 0, 1.0, 215, False, 0),
+            
+            # Turn 4: 90° right turn (90° -> 0°) - Tight corner with Attack Mode Zone
+            TrackSegment('right_corner', 94, 60, 0, 2, 0, 0.93, 105, True, 0.0167),
+            
+            # Final section back to start/finish
+            TrackSegment('straight', 172, np.inf, 0, 0, 0, 1.0, 230, False, 0),
         ]
         return segments
     
@@ -338,7 +346,7 @@ class TrackConfig:
 class SimulationConfig:
     """Simulation runtime parameters"""
     
-    TIMESTEP: float = 0.05  # seconds (20 Hz simulation for better accuracy)
+    TIMESTEP: float = 0.05  # seconds (1000 Hz simulation for maximum accuracy)
     NUM_LAPS: int = 10
     NUM_CARS: int = 24
     RACE_DISTANCE_KM: float = 2.5  # km per lap
@@ -353,7 +361,7 @@ class SimulationConfig:
     PARALLEL_PHYSICS: bool = False  # Single-threaded for deterministic results
     
     # Output configuration
-    LOG_FREQUENCY: int = 20  # Log every N timesteps (1 second at 20Hz)
+    LOG_FREQUENCY: int = 1000  # Log every N timesteps (1 second at 1000Hz)
     EXPORT_JSON: bool = True
     EXPORT_CSV: bool = True
     STORE_ALL_TIMESTEPS: bool = True  # Store complete state matrix at every timestep
