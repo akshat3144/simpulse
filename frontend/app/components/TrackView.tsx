@@ -11,7 +11,7 @@ interface TrackViewProps {
 
 export default function TrackView({
   cars,
-  trackLength = 2500,
+  trackLength = 2370,
 }: TrackViewProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -106,25 +106,24 @@ export default function TrackView({
       .append("path")
       .attr("d", trackPath)
       .attr("fill", "none")
-      .attr("stroke", "#2a2a2a")
-      .attr("stroke-width", 30);
+      .attr("stroke", "#1E3A4D")
+      .attr("stroke-width", 32);
 
     // Draw track surface
     svg
       .append("path")
       .attr("d", trackPath)
       .attr("fill", "none")
-      .attr("stroke", "#444")
-      .attr("stroke-width", 24);
+      .attr("stroke", "#0A1820")
+      .attr("stroke-width", 26);
 
-    // Draw track center line (dashed)
+    // Draw track center line (solid thin line)
     svg
       .append("path")
       .attr("d", trackPath)
       .attr("fill", "none")
-      .attr("stroke", "#666")
-      .attr("stroke-width", 1)
-      .attr("stroke-dasharray", "10,10");
+      .attr("stroke", "#142835")
+      .attr("stroke-width", 2);
 
     // Get path element for calculations
     const pathElement = svg
@@ -140,19 +139,19 @@ export default function TrackView({
       // Start line
       svg
         .append("line")
-        .attr("x1", startPoint.x - 12)
-        .attr("y1", startPoint.y - 12)
-        .attr("x2", startPoint.x - 12)
-        .attr("y2", startPoint.y + 12)
-        .attr("stroke", "#00ff00")
-        .attr("stroke-width", 4);
+        .attr("x1", startPoint.x - 13)
+        .attr("y1", startPoint.y - 13)
+        .attr("x2", startPoint.x - 13)
+        .attr("y2", startPoint.y + 13)
+        .attr("stroke", "#00FF9C")
+        .attr("stroke-width", 3);
 
       svg
         .append("text")
-        .attr("x", startPoint.x - 12)
-        .attr("y", startPoint.y - 20)
+        .attr("x", startPoint.x - 13)
+        .attr("y", startPoint.y - 22)
         .attr("text-anchor", "middle")
-        .attr("fill", "#00ff00")
+        .attr("fill", "#00FF9C")
         .attr("font-size", "12px")
         .attr("font-weight", "bold")
         .text("START/FINISH");
@@ -161,11 +160,11 @@ export default function TrackView({
       for (let i = 0; i < 6; i++) {
         svg
           .append("rect")
-          .attr("x", startPoint.x - 14)
-          .attr("y", startPoint.y - 12 + i * 4)
+          .attr("x", startPoint.x - 15)
+          .attr("y", startPoint.y - 13 + i * 4)
           .attr("width", 4)
           .attr("height", 4)
-          .attr("fill", i % 2 === 0 ? "white" : "black");
+          .attr("fill", i % 2 === 0 ? "#FFFFFF" : "#041014");
       }
     }
 
@@ -182,7 +181,7 @@ export default function TrackView({
         .attr("y1", s1Point.y - 10)
         .attr("x2", s1Point.x + 10)
         .attr("y2", s1Point.y + 10)
-        .attr("stroke", "#ff0000")
+        .attr("stroke", "#FF3B3B")
         .attr("stroke-width", 3);
 
       svg
@@ -190,7 +189,7 @@ export default function TrackView({
         .attr("x", s1Point.x)
         .attr("y", s1Point.y - 15)
         .attr("text-anchor", "middle")
-        .attr("fill", "#ff0000")
+        .attr("fill", "#FF3B3B")
         .attr("font-size", "11px")
         .attr("font-weight", "bold")
         .text("SECTOR 1");
@@ -205,7 +204,7 @@ export default function TrackView({
         .attr("y1", s2Point.y - 10)
         .attr("x2", s2Point.x + 10)
         .attr("y2", s2Point.y + 10)
-        .attr("stroke", "#ffff00")
+        .attr("stroke", "#FFBB00")
         .attr("stroke-width", 3);
 
       svg
@@ -213,7 +212,7 @@ export default function TrackView({
         .attr("x", s2Point.x)
         .attr("y", s2Point.y + 25)
         .attr("text-anchor", "middle")
-        .attr("fill", "#ffff00")
+        .attr("fill", "#FFBB00")
         .attr("font-size", "11px")
         .attr("font-weight", "bold")
         .text("SECTOR 2");
@@ -231,17 +230,16 @@ export default function TrackView({
         .attr("cy", az1Point.y)
         .attr("r", 20)
         .attr("fill", "none")
-        .attr("stroke", "#00ffff")
-        .attr("stroke-width", 3)
-        .attr("opacity", 0.6);
+        .attr("stroke", "#00E5FF")
+        .attr("stroke-width", 3);
 
       svg
         .append("text")
         .attr("x", az1Point.x)
         .attr("y", az1Point.y + 4)
         .attr("text-anchor", "middle")
-        .attr("fill", "#00ffff")
-        .attr("font-size", "12px")
+        .attr("fill", "#00E5FF")
+        .attr("font-size", "14px")
         .attr("font-weight", "bold")
         .text("⚡");
     }
@@ -254,17 +252,16 @@ export default function TrackView({
         .attr("cy", az2Point.y)
         .attr("r", 20)
         .attr("fill", "none")
-        .attr("stroke", "#00ffff")
-        .attr("stroke-width", 3)
-        .attr("opacity", 0.6);
+        .attr("stroke", "#00E5FF")
+        .attr("stroke-width", 3);
 
       svg
         .append("text")
         .attr("x", az2Point.x)
         .attr("y", az2Point.y + 4)
         .attr("text-anchor", "middle")
-        .attr("fill", "#00ffff")
-        .attr("font-size", "12px")
+        .attr("fill", "#00E5FF")
+        .attr("font-size", "14px")
         .attr("font-weight", "bold")
         .text("⚡");
     }
@@ -274,6 +271,22 @@ export default function TrackView({
     const sortedCars = [...activeCars].sort(
       (a, b) => b.total_distance - a.total_distance
     );
+
+    // Define solid colors for cars
+    const carColors = [
+      "#FFBB00", // Leader - Yellow/Gold
+      "#00E5FF", // 2nd - Cyan
+      "#FF7A00", // 3rd - Orange
+      "#00FF9C", // 4th - Green
+      "#FF3B3B", // 5th - Red
+      "#C9D1D9", // 6th - Light gray
+      "#FFBB00", // Repeat colors
+      "#00E5FF",
+      "#FF7A00",
+      "#00FF9C",
+      "#FF3B3B",
+      "#C9D1D9",
+    ];
 
     // Draw cars on the track
     const carGroup = svg.append("g");
@@ -285,19 +298,18 @@ export default function TrackView({
       const point = pathElement?.getPointAtLength(distanceOnPath);
 
       if (point) {
-        // Car color (leader is gold)
-        const color =
-          index === 0 ? "#FFD700" : d3.schemeCategory10[car.id % 10];
+        // Car color
+        const color = carColors[index % carColors.length];
 
-        // Car circle (larger)
+        // Car circle (larger, solid)
         carGroup
           .append("circle")
           .attr("cx", point.x)
           .attr("cy", point.y)
-          .attr("r", 8)
+          .attr("r", 9)
           .attr("fill", color)
-          .attr("stroke", "black")
-          .attr("stroke-width", 2)
+          .attr("stroke", "#041014")
+          .attr("stroke-width", 2.5)
           .style("cursor", "pointer")
           .append("title")
           .text(
@@ -314,8 +326,8 @@ export default function TrackView({
           .attr("x", point.x)
           .attr("y", point.y + 4)
           .attr("text-anchor", "middle")
-          .attr("fill", "black")
-          .attr("font-size", "10px")
+          .attr("fill", "#041014")
+          .attr("font-size", "11px")
           .attr("font-weight", "bold")
           .text(car.position);
 
@@ -323,10 +335,11 @@ export default function TrackView({
         if (car.attack_mode_active) {
           carGroup
             .append("text")
-            .attr("x", point.x + 12)
+            .attr("x", point.x + 14)
             .attr("y", point.y - 8)
             .attr("text-anchor", "middle")
-            .attr("font-size", "16px")
+            .attr("font-size", "18px")
+            .attr("fill", "#00E5FF")
             .text("⚡");
         }
       }
@@ -338,7 +351,7 @@ export default function TrackView({
       .attr("x", 450)
       .attr("y", 20)
       .attr("text-anchor", "middle")
-      .attr("fill", "white")
+      .attr("fill", "#FFFFFF")
       .attr("font-size", "16px")
       .attr("font-weight", "bold")
       .text("🏁 Plaksha E-Prix Circuit - Live View");
@@ -348,15 +361,16 @@ export default function TrackView({
       .append("text")
       .attr("x", 20)
       .attr("y", 390)
-      .attr("fill", "#888")
+      .attr("fill", "#8B949E")
       .attr("font-size", "10px")
-      .text(`${activeCars.length} cars racing • Plaksha: 2.37km • 18 turns`);
+      .text(`${activeCars.length} cars racing • Plaksha: 2.370km • 10 turns`);
   }, [cars, trackLength]);
 
   return (
     <div
       ref={containerRef}
-      className="bg-gray-900 rounded-lg p-3 md:p-6 shadow-lg w-full"
+      className="rounded-lg p-3 md:p-6 w-full"
+      style={{ background: "#0A1820", border: "1px solid #142835" }}
     >
       <div className="w-full overflow-x-auto">
         <svg ref={svgRef} className="w-full h-auto min-w-[300px]"></svg>

@@ -42,10 +42,14 @@ export default function EnergyChart({ cars }: EnergyChartProps) {
       .domain([0, 100])
       .range([height - margin.bottom, margin.top]);
 
-    // Color scale
-    const colorScale = d3
-      .scaleSequential(d3.interpolateRdYlGn)
-      .domain([0, 100]);
+    // Solid color function based on battery percentage
+    const getBarColor = (percentage: number) => {
+      if (percentage < 20) return "#FF3B3B";
+      if (percentage < 40) return "#FF7A00";
+      if (percentage < 60) return "#FFBB00";
+      if (percentage < 80) return "#00E5FF";
+      return "#00FF9C";
+    };
 
     // Bars
     svg
@@ -60,9 +64,8 @@ export default function EnergyChart({ cars }: EnergyChartProps) {
         "height",
         (d) => height - margin.bottom - yScale(d.battery_percentage)
       )
-      .attr("fill", (d) => colorScale(d.battery_percentage))
-      .attr("stroke", "black")
-      .attr("stroke-width", 1)
+      .attr("fill", (d) => getBarColor(d.battery_percentage))
+      .attr("stroke", "none")
       .append("title")
       .text((d) => `${d.driver_name}: ${d.battery_percentage.toFixed(1)}%`);
 
@@ -76,7 +79,7 @@ export default function EnergyChart({ cars }: EnergyChartProps) {
       .attr("x", (d) => xScale(d.driver_name)! + xScale.bandwidth() / 2)
       .attr("y", (d) => yScale(d.battery_percentage) - 5)
       .attr("text-anchor", "middle")
-      .attr("fill", "white")
+      .attr("fill", "#FFFFFF")
       .attr("font-size", "12px")
       .attr("font-weight", "bold")
       .text((d) => `${d.battery_percentage.toFixed(0)}%`);
@@ -87,7 +90,7 @@ export default function EnergyChart({ cars }: EnergyChartProps) {
       .attr("transform", `translate(0,${height - margin.bottom})`)
       .call(d3.axisBottom(xScale))
       .selectAll("text")
-      .attr("fill", "white")
+      .attr("fill", "#C9D1D9")
       .attr("transform", "rotate(-20)")
       .style("text-anchor", "end")
       .style("font-size", "11px");
@@ -103,10 +106,13 @@ export default function EnergyChart({ cars }: EnergyChartProps) {
           .tickFormat((d) => `${d}%`)
       )
       .selectAll("text")
-      .attr("fill", "white");
+      .attr("fill", "#C9D1D9");
 
     // Axis lines
-    svg.selectAll(".domain, .tick line").attr("stroke", "#666");
+    svg
+      .selectAll(".domain, .tick line")
+      .attr("stroke", "#142835")
+      .attr("stroke-width", 2);
 
     // Title
     svg
@@ -114,7 +120,7 @@ export default function EnergyChart({ cars }: EnergyChartProps) {
       .attr("x", width / 2)
       .attr("y", 20)
       .attr("text-anchor", "middle")
-      .attr("fill", "white")
+      .attr("fill", "#FFFFFF")
       .attr("font-size", "16px")
       .attr("font-weight", "bold")
       .text("🔋 Battery Energy (Top 5)");
@@ -132,12 +138,16 @@ export default function EnergyChart({ cars }: EnergyChartProps) {
           .tickFormat(() => "")
       )
       .selectAll("line")
-      .attr("stroke", "#333")
-      .attr("stroke-dasharray", "2,2");
+      .attr("stroke", "#142835")
+      .attr("stroke-width", 1)
+      .attr("stroke-dasharray", "none");
   }, [cars]);
 
   return (
-    <div className="bg-gray-900 rounded-lg p-4 shadow-lg">
+    <div
+      className="rounded-lg p-4"
+      style={{ background: "#0A1820", border: "1px solid #142835" }}
+    >
       <svg ref={svgRef}></svg>
     </div>
   );

@@ -61,14 +61,23 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 md:p-8 overflow-x-hidden">
+    <div
+      className="min-h-screen text-white p-4 md:p-8 overflow-x-hidden"
+      style={{ background: "#041014" }}
+    >
       {/* Header */}
       <header className="mb-6 md:mb-8">
-        <h1 className="text-2xl md:text-4xl font-bold mb-2">
-          🏎️ Formula E Race Dashboard
+        <h1
+          className="text-2xl md:text-4xl font-bold mb-2"
+          style={{ color: "#FFFFFF" }}
+        >
+          🏎️ Formula E Simulator
         </h1>
-        <p className="text-gray-400 text-sm md:text-base">
-          Real-time race simulation powered by FastAPI + Next.js + D3.js
+        <p className="text-sm md:text-base mb-1" style={{ color: "#C9D1D9" }}>
+          A stochastic dynamics-based racing simulation framework
+        </p>
+        <p className="text-xs md:text-sm" style={{ color: "#8B949E" }}>
+          Powered by SimPulse Engine
         </p>
       </header>
 
@@ -86,27 +95,59 @@ export default function Home() {
       {/* Race Stats */}
       {raceState && (
         <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          <div className="bg-gray-900 rounded-lg p-3 md:p-4">
-            <p className="text-gray-400 text-xs md:text-sm">Race Time</p>
-            <p className="text-lg md:text-2xl font-bold">
+          <div
+            className="rounded-lg p-3 md:p-4"
+            style={{ background: "#0A1820", border: "1px solid #142835" }}
+          >
+            <p className="text-xs md:text-sm" style={{ color: "#8B949E" }}>
+              Race Time
+            </p>
+            <p
+              className="text-lg md:text-2xl font-bold"
+              style={{ color: "#00E5FF" }}
+            >
               {raceState.current_time.toFixed(1)}s
             </p>
           </div>
-          <div className="bg-gray-900 rounded-lg p-3 md:p-4">
-            <p className="text-gray-400 text-xs md:text-sm">Current Lap</p>
-            <p className="text-lg md:text-2xl font-bold">
+          <div
+            className="rounded-lg p-3 md:p-4"
+            style={{ background: "#0A1820", border: "1px solid #142835" }}
+          >
+            <p className="text-xs md:text-sm" style={{ color: "#8B949E" }}>
+              Current Lap
+            </p>
+            <p
+              className="text-lg md:text-2xl font-bold"
+              style={{ color: "#FFBB00" }}
+            >
               {raceState.current_lap}
             </p>
           </div>
-          <div className="bg-gray-900 rounded-lg p-3 md:p-4">
-            <p className="text-gray-400 text-xs md:text-sm">Active Cars</p>
-            <p className="text-lg md:text-2xl font-bold">
+          <div
+            className="rounded-lg p-3 md:p-4"
+            style={{ background: "#0A1820", border: "1px solid #142835" }}
+          >
+            <p className="text-xs md:text-sm" style={{ color: "#8B949E" }}>
+              Active Cars
+            </p>
+            <p
+              className="text-lg md:text-2xl font-bold"
+              style={{ color: "#00FF9C" }}
+            >
               {raceState.active_cars}/{raceState.total_cars}
             </p>
           </div>
-          <div className="bg-gray-900 rounded-lg p-3 md:p-4">
-            <p className="text-gray-400 text-xs md:text-sm">Status</p>
-            <p className="text-lg md:text-2xl font-bold">
+          <div
+            className="rounded-lg p-3 md:p-4"
+            style={{ background: "#0A1820", border: "1px solid #142835" }}
+          >
+            <p className="text-xs md:text-sm" style={{ color: "#8B949E" }}>
+              Status
+            </p>
+            <p
+              className="text-lg md:text-2xl font-bold"
+              style={{ color: "#FFFFFF" }}
+            >
               {raceState.race_finished
                 ? "🏁 Finished"
                 : raceActive
@@ -132,13 +173,13 @@ export default function Home() {
         </div>
       ) : (
         <div className="text-center py-20">
-          <p className="text-gray-400 text-xl mb-4">
+          <p className="text-xl mb-4" style={{ color: "#C9D1D9" }}>
             {isConnected
               ? "Click 'Create Race' to start"
               : "Connecting to server..."}
           </p>
           {!isConnected && (
-            <p className="text-red-400">
+            <p style={{ color: "#FF3B3B" }}>
               Make sure the backend is running on port 8000
             </p>
           )}
