@@ -83,11 +83,11 @@ class PhysicsConfig:
     TIRE_COMPOUND: str = "All-weather slick"  # Single compound for wet and dry
     
     # Tire degradation (realistic parameters)
-    TIRE_K_BASE: float = 0.000008  # Base degradation rate per second
-    TIRE_K_TEMP: float = 0.000002  # Temperature-dependent degradation
-    TIRE_K_SPEED: float = 0.0000012  # Speed-dependent degradation
-    TIRE_K_LATERAL: float = 0.000015  # Lateral G-force degradation (cornering)
-    TIRE_K_LOCK: float = 0.005  # Degradation spike on wheel lock
+    TIRE_K_BASE: float = 0.002  # Base degradation rate per second (increased for visibility)
+    TIRE_K_TEMP: float = 0.00005  # Temperature-dependent degradation
+    TIRE_K_SPEED: float = 0.00003  # Speed-dependent degradation
+    TIRE_K_LATERAL: float = 0.0004  # Lateral G-force degradation (cornering)
+    TIRE_K_LOCK: float = 0.01  # Degradation spike on wheel lock
     MU_MAX: float = 1.2  # Maximum grip coefficient (Formula E street circuit)
     MU_MIN: float = 0.9  # Minimum grip coefficient (fully worn)
     MU_WET_FACTOR: float = 0.7  # Wet condition grip multiplier
@@ -214,18 +214,18 @@ class TrackSegment:
 class TrackConfig:
     """Track configuration and geometry"""
     
-    def __init__(self, track_name: str = "Jakarta"):
+    def __init__(self, track_name: str = "Plaksha"):
         self.track_name = track_name
         self.segments = self._build_track()
         self.total_length = sum(seg.length for seg in self.segments)
-        self.lap_record_seconds = 78.0  # Jakarta E-Prix typical lap time
+        self.lap_record_seconds = 78.0  # Plaksha E-Prix typical lap time
         self.attack_mode_zones = self._get_attack_mode_zones()
         self.pit_lane_length = 180.0  # meters
         self.pit_lane_speed_limit_kmh = 50.0  # km/h
         
     def _build_track(self) -> List[TrackSegment]:
-        """Build Jakarta E-Prix Circuit - Real Formula E street circuit"""
-        # Jakarta International E-Prix Circuit (2022-present)
+        """Build Plaksha E-Prix Circuit - Real Formula E street circuit"""
+        # Plaksha International E-Prix Circuit (2022-present)
         # 2.370 km, 18 turns, flowing street circuit layout
         segments = [
             # Sector 1 - Start/Finish through Turn 1-6

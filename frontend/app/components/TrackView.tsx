@@ -14,27 +14,38 @@ export default function TrackView({
   trackLength = 2500,
 }: TrackViewProps) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!svgRef.current || cars.length === 0) return;
 
     const svg = d3.select(svgRef.current);
-    const width = 900;
-    const height = 400;
-    const margin = 50;
+
+    // Responsive dimensions
+    const containerWidth = containerRef.current?.clientWidth || 900;
+    const isMobile = containerWidth < 768;
+    const width = isMobile
+      ? Math.min(containerWidth - 20, 600)
+      : Math.min(containerWidth - 20, 1600);
+    const height = isMobile ? width * 0.75 : width * 0.6;
+    const margin = isMobile ? 30 : 50;
 
     // Clear previous content
     svg.selectAll("*").remove();
 
-    // Setup SVG
-    svg.attr("width", width).attr("height", height);
+    // Setup SVG with viewBox for responsive scaling
+    svg
+      .attr("width", width)
+      .attr("height", height)
+      .attr("viewBox", `0 0 900 400`)
+      .attr("preserveAspectRatio", "xMidYMid meet");
 
-    // Jakarta E-Prix Circuit - Real Formula E track layout
-    // Based on Jakarta International E-Prix Circuit (18 turns, 2.370 km)
-    const centerX = width / 2;
-    const centerY = height / 2;
+    // Plaksha E-Prix Circuit - Real Formula E track layout
+    // Based on Plaksha International E-Prix Circuit (18 turns, 2.370 km)
+    const centerX = 450; // Fixed for viewBox
+    const centerY = 200; // Fixed for viewBox
 
-    // Create Jakarta circuit path matching the attached image
+    // Create Plaksha circuit path matching the attached image
     // Flowing street circuit with long straights and technical sections
     const trackPath = `
       M 200,300
@@ -321,30 +332,35 @@ export default function TrackView({
       }
     });
 
-    // Title
+    // Title (use viewBox coordinates)
     svg
       .append("text")
-      .attr("x", width / 2)
+      .attr("x", 450)
       .attr("y", 20)
       .attr("text-anchor", "middle")
       .attr("fill", "white")
       .attr("font-size", "16px")
       .attr("font-weight", "bold")
-      .text("🏁 Jakarta E-Prix Circuit - Live View");
+      .text("🏁 Plaksha E-Prix Circuit - Live View");
 
-    // Legend
+    // Legend (use viewBox coordinates)
     svg
       .append("text")
       .attr("x", 20)
-      .attr("y", height - 10)
+      .attr("y", 390)
       .attr("fill", "#888")
       .attr("font-size", "10px")
-      .text(`${activeCars.length} cars racing • Jakarta: 2.37km • 18 turns`);
+      .text(`${activeCars.length} cars racing • Plaksha: 2.37km • 18 turns`);
   }, [cars, trackLength]);
 
   return (
-    <div className="bg-gray-900 rounded-lg p-6 shadow-lg">
-      <svg ref={svgRef}></svg>
+    <div
+      ref={containerRef}
+      className="bg-gray-900 rounded-lg p-3 md:p-6 shadow-lg w-full"
+    >
+      <div className="w-full overflow-x-auto">
+        <svg ref={svgRef} className="w-full h-auto min-w-[300px]"></svg>
+      </div>
     </div>
   );
 }

@@ -142,7 +142,7 @@ visualization_analysis/
 - **What to look for**:
 - Lap times should be relatively consistent per car
 - Variation is normal (traffic, battery level, tires)
-- Typical range: 78-90 seconds per lap for 2.98km track (Jakarta)
+- Typical range: 78-90 seconds per lap for 2.98km track (Plaksha)
 - Bar chart shows average lap time comparison### 9. Race Snapshot (`9_race_snapshot.png`)
 
 - **Purpose**: Visualize race spread at a moment in time
@@ -429,9 +429,9 @@ The simulation is working correctly if:
 
 ### Track Geometry
 
-- **Track Length:** 2,980m per lap (Jakarta E-Prix Circuit)
+- **Track Length:** 2,980m per lap (Plaksha E-Prix Circuit)
 - **Track Width:** Varies (street circuit)
-- **Track Layout:** Jakarta street circuit with flowing corners
+- **Track Layout:** Plaksha street circuit with flowing corners
 - **Segments:** 33 (18 turns, straights, chicanes, attack zones)
 
 ### Physics Engine Validation

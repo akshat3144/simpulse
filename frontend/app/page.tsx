@@ -6,7 +6,6 @@ import { RaceState, WebSocketMessage } from "./types/race";
 import Leaderboard from "./components/Leaderboard";
 import TrackView from "./components/TrackView";
 import ControlPanel from "./components/ControlPanel";
-import EnergyChart from "./components/EnergyChart";
 
 export default function Home() {
   const WS_URL = "ws://localhost:8000/ws/race";
@@ -62,11 +61,13 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen bg-black text-white p-4 md:p-8 overflow-x-hidden">
       {/* Header */}
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">🏎️ Formula E Race Dashboard</h1>
-        <p className="text-gray-400">
+      <header className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-4xl font-bold mb-2">
+          🏎️ Formula E Race Dashboard
+        </h1>
+        <p className="text-gray-400 text-sm md:text-base">
           Real-time race simulation powered by FastAPI + Next.js + D3.js
         </p>
       </header>
@@ -84,26 +85,28 @@ export default function Home() {
 
       {/* Race Stats */}
       {raceState && (
-        <div className="mb-6 grid grid-cols-4 gap-4">
-          <div className="bg-gray-900 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">Race Time</p>
-            <p className="text-2xl font-bold">
+        <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          <div className="bg-gray-900 rounded-lg p-3 md:p-4">
+            <p className="text-gray-400 text-xs md:text-sm">Race Time</p>
+            <p className="text-lg md:text-2xl font-bold">
               {raceState.current_time.toFixed(1)}s
             </p>
           </div>
-          <div className="bg-gray-900 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">Current Lap</p>
-            <p className="text-2xl font-bold">{raceState.current_lap}</p>
+          <div className="bg-gray-900 rounded-lg p-3 md:p-4">
+            <p className="text-gray-400 text-xs md:text-sm">Current Lap</p>
+            <p className="text-lg md:text-2xl font-bold">
+              {raceState.current_lap}
+            </p>
           </div>
-          <div className="bg-gray-900 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">Active Cars</p>
-            <p className="text-2xl font-bold">
+          <div className="bg-gray-900 rounded-lg p-3 md:p-4">
+            <p className="text-gray-400 text-xs md:text-sm">Active Cars</p>
+            <p className="text-lg md:text-2xl font-bold">
               {raceState.active_cars}/{raceState.total_cars}
             </p>
           </div>
-          <div className="bg-gray-900 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">Status</p>
-            <p className="text-2xl font-bold">
+          <div className="bg-gray-900 rounded-lg p-3 md:p-4">
+            <p className="text-gray-400 text-xs md:text-sm">Status</p>
+            <p className="text-lg md:text-2xl font-bold">
               {raceState.race_finished
                 ? "🏁 Finished"
                 : raceActive
@@ -116,16 +119,15 @@ export default function Home() {
 
       {/* Main Content */}
       {raceState ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Leaderboard */}
-          <div className="lg:col-span-1">
-            <Leaderboard cars={raceState.cars} />
+        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4 md:gap-6">
+          {/* Track View - First on mobile, Right on desktop */}
+          <div className="lg:col-span-2 lg:order-2">
+            <TrackView cars={raceState.cars} trackLength={2980} />
           </div>
 
-          {/* Right Column - Visualizations */}
-          <div className="lg:col-span-2 space-y-6">
-            <TrackView cars={raceState.cars} trackLength={2500} />
-            <EnergyChart cars={raceState.cars} />
+          {/* Leaderboard - Second on mobile, Left on desktop */}
+          <div className="lg:col-span-1 lg:order-1">
+            <Leaderboard cars={raceState.cars} />
           </div>
         </div>
       ) : (

@@ -107,7 +107,7 @@ ax1.grid(True, alpha=0.3)
 # Speed vs lap_distance (one lap example)
 sample_car = cars[0]
 sample_lap = df[(df['car_number'] == sample_car) & 
-                (df['current_lap'] == 3)].copy()  # Show lap 3 (Jakarta has longer laps)
+                (df['current_lap'] == 3)].copy()  # Show lap 3 (Plaksha has longer laps)
 
 if len(sample_lap) > 0:
     ax2.plot(sample_lap['lap_distance'], sample_lap['speed_kmh'], 
@@ -246,7 +246,7 @@ ax1.grid(True, alpha=0.3)
 # Tire degradation vs distance
 for i, car in enumerate(cars):
     car_data = df[df['car_number'] == car]
-    # Calculate total distance (Jakarta circuit: 2980m per lap)
+    # Calculate total distance (Plaksha circuit: 2980m per lap)
     total_distance = car_data['current_lap'] * 2980 + car_data['lap_distance']
     ax2.plot(total_distance / 1000, car_data['tire_degradation'] * 100, 
             label=f'Car {car}', alpha=0.7, linewidth=1.5)
@@ -422,7 +422,7 @@ ax.set_title(f'Race Snapshot at t={mid_time:.1f}s', fontsize=14, fontweight='bol
 ax.set_yticks(range(len(snapshot)))
 ax.set_yticklabels([f"P{i+1}" for i in range(len(snapshot))])
 ax.grid(True, alpha=0.3, axis='x')
-ax.set_xlim(0, 2980)  # Jakarta circuit length
+ax.set_xlim(0, 2980)  # Plaksha circuit length
 plt.tight_layout()
 plt.savefig(output_dir / '9_race_snapshot.png', dpi=150, bbox_inches='tight')
 plt.close()
