@@ -39,13 +39,26 @@ class DriverController:
         """
         current_speed = car.get_speed()
         
-        # Calculate target speed for this segment
+        # Look ahead for corners to enable early braking
+        lookahead_distance = current_speed * 2.0  # Look 2 seconds ahead
+        future_distance = (car.lap_distance + lookahead_distance) % track_config.total_length
+        next_segment, _ = track_config.get_segment_at_distance(future_distance)
+        
+        # If approaching a corner from a straight, use next segment's target speed
+        if segment.segment_type == 'straight' and next_segment.segment_type != 'straight':
+            # Use the corner's target speed to start braking early
+            target_segment = next_segment
+        else:
+            # Use current segment's target speed
+            target_segment = segment
+        
+        # Calculate target speed for the relevant segment
         target_speed = DriverController._calculate_target_speed(
-            car, segment, driver_skill, driver_aggression,
+            car, target_segment, driver_skill, driver_aggression,
             race_position, gap_to_ahead, weather
         )
         
-        # Calculate steering angle needed
+        # Calculate steering angle needed for current segment
         steering = DriverController._calculate_steering(
             car, segment, driver_skill, driver_consistency
         )
@@ -188,7 +201,7 @@ class DriverController:
         """Calculate throttle and brake inputs"""
         
         speed_error = target_speed - current_speed
-        deadband = 2.0  # m/s
+        deadband = 1.0  # m/s (tighter control)
         
         if speed_error > deadband:
             # Accelerate
@@ -196,13 +209,23 @@ class DriverController:
             
             # Reduce throttle mid-corner
             if segment.segment_type != 'straight':
-                throttle *= 0.7
+                throttle *= 0.5  # Much more cautious in corners
             
             brake = 0.0
             
         elif speed_error < -deadband:
-            # Brake
-            brake = min(abs(speed_error) / 20.0, 1.0) * (0.6 + driver_aggression * 0.4)
+            # Brake - need much stronger braking for corners
+            speed_diff = abs(speed_error)
+            
+            # If approaching corner (not straight) and speed too high, brake harder
+            if segment.segment_type != 'straight':
+                # Very aggressive braking for corners - full brake if way over speed
+                brake = min(speed_diff / 8.0, 1.0)  # Even more aggressive
+                brake = max(brake, 0.8)  # Minimum 80% brake in corners when over speed
+            else:
+                # Normal braking on straights
+                brake = min(speed_diff / 15.0, 1.0) * (0.6 + driver_aggression * 0.4)
+            
             throttle = 0.0
             
         else:
@@ -210,7 +233,7 @@ class DriverController:
             if segment.segment_type == 'straight':
                 throttle = 0.4
             else:
-                throttle = 0.25
+                throttle = 0.15  # Very light throttle in corners
             brake = 0.0
         
         return np.clip(throttle, 0.0, 1.0), np.clip(brake, 0.0, 1.0)
@@ -400,6 +423,18 @@ class PhysicsEngine:
         # Update velocity
         new_velocity_x = car.velocity_x + acceleration * dt
         new_velocity_x = np.clip(new_velocity_x, 0.0, PhysicsConfig.MAX_SPEED_MS)
+        
+        # CRITICAL: Enforce corner speed limit based on lateral grip
+        # In corners, if speed exceeds what the tires can handle, force it down
+        if segment.radius < 10000:  # If in a corner
+            # Maximum safe speed for this corner: v_max = sqrt(μ * g * r)
+            mu_corner = car.grip_coefficient * segment.grip_level
+            max_corner_speed = np.sqrt(mu_corner * PhysicsConfig.GRAVITY * segment.radius * 1.1)  # 10% safety margin
+            
+            # Hard limit: cannot exceed corner speed limit
+            if new_velocity_x > max_corner_speed:
+                # Force speed down (simulate loss of traction / mandatory slowdown)
+                new_velocity_x = max_corner_speed
         
         # Lateral velocity (simplified - from steering)
         # a_lat = v² * tan(δ) / L

@@ -32,7 +32,7 @@ class PhysicsConfig:
     MAX_POWER_QUALI_KW: float = 350.0  # kW (qualifying)
     MAX_REGEN_POWER_KW: float = 600.0  # kW (world's first with front and rear regen)
     MAX_ACCELERATION: float = 2.8  # m/s² (0-100 km/h in 2.8s)
-    MAX_DECELERATION: float = 4.5  # m/s² (with full regen braking)
+    MAX_DECELERATION: float = 5.5  # m/s² (Formula E cars can brake harder with carbon brakes + regen)
     MAX_SPEED_KMH: float = 322.0  # km/h (Gen3 top speed record)
     MAX_SPEED_MS: float = 322.0 / 3.6  # m/s (89.44 m/s)
     GRAVITY: float = 9.81  # m/s²
