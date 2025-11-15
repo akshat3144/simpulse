@@ -87,14 +87,14 @@ export default function Leaderboard({ cars }: LeaderboardProps) {
                   <span
                     style={{
                       color:
-                        car.tire_degradation > 70
+                        car.tire_degradation > 0.7
                           ? "#FF3B3B"
-                          : car.tire_degradation > 40
+                          : car.tire_degradation > 0.4
                           ? "#FF7A00"
                           : "#00FF9C",
                     }}
                   >
-                    🛞 {(100 - car.tire_degradation).toFixed(0)}%
+                    🛞 {(100 - car.tire_degradation * 100).toFixed(0)}%
                   </span>
                   {/* SimPulse Performance Index */}
                   {car.performance_index !== undefined && (
