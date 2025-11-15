@@ -77,6 +77,21 @@ export default function Leaderboard({ cars }: LeaderboardProps) {
                 >
                   🛞 {(100 - car.tire_degradation).toFixed(0)}%
                 </span>
+                {/* SimPulse Performance Index */}
+                {car.performance_index !== undefined && (
+                  <span
+                    className={`font-semibold ${
+                      car.performance_index > 0.7
+                        ? "text-emerald-400"
+                        : car.performance_index > 0.5
+                        ? "text-yellow-400"
+                        : "text-orange-400"
+                    }`}
+                    title="SimPulse Performance Index P_i(t)"
+                  >
+                    📊 {(car.performance_index * 100).toFixed(0)}
+                  </span>
+                )}
               </div>
             </div>
 

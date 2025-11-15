@@ -1,7 +1,15 @@
 """
 Main Formula E Race Simulation Engine
-Orchestrates all components for complete race simulation
-NO ML/AI - Pure physics-based simulation
+Orchestrates all components for complete SimPulse race simulation
+
+SimPulse Integration:
+    - Vector space state representation (CarState.to_vector())
+    - Stochastic dynamics: x(t+1) = f(x,u,θ) + ε(t)
+    - Event-driven probabilistic system
+    - Performance index calculation P_i(t)
+    - MDP-ready architecture for future RL integration
+
+Supports both deterministic physics and stochastic simulations
 """
 
 import numpy as np
@@ -71,8 +79,12 @@ class FormulaERaceEngine:
         self.race_state = RaceState(num_cars, self.driver_configs)
         self.starting_grid = [i + 1 for i in range(num_cars)]
         
-        # Initialize subsystems
-        self.physics_engine = PhysicsEngine(self.track_config)
+        # Initialize subsystems with stochastic dynamics enabled
+        self.physics_engine = PhysicsEngine(
+            self.track_config,
+            enable_stochastic=True,  # Enable SimPulse stochastic noise
+            noise_seed=self.physics_seed
+        )
         self.event_generator = EventGenerator(self.events_seed)
         self.strategy_maker = StrategyDecisionMaker(self.events_seed)
         

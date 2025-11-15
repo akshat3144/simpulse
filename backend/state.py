@@ -215,6 +215,57 @@ class CarState:
         
         return distance_km / energy_kwh if energy_kwh > 0 else 0.0
     
+    def get_performance_index(self, weights: dict = None) -> float:
+        """
+        Calculate SimPulse performance index P_i(t)
+        
+        P_i(t) = w₁·v(t) + w₂·a(t) + w₃·e(t) + w₄·τ(t) + w₅·ψ(t)
+        
+        Components:
+            v(t): Velocity factor (normalized speed)
+            a(t): Acceleration capability
+            e(t): Energy efficiency
+            τ(t): Tire condition (inverse degradation)
+            ψ(t): Strategy parameter (aggression balance)
+        
+        Args:
+            weights: Custom weights dict (uses defaults if None)
+            
+        Returns:
+            Performance index scalar
+        """
+        from .config import PhysicsConfig
+        
+        # Default weights (tuned for Formula E racing)
+        if weights is None:
+            weights = {
+                'velocity': 0.30,
+                'acceleration': 0.15,
+                'energy': 0.25,
+                'tire': 0.20,
+                'strategy': 0.10
+            }
+        
+        # Normalize components to 0-1 range
+        v_norm = self.get_speed() / PhysicsConfig.MAX_SPEED_MS  # Velocity factor
+        a_norm = np.clip(self.acceleration / PhysicsConfig.MAX_ACCELERATION, 0, 1)  # Acceleration
+        e_norm = self.battery_percentage / 100.0  # Energy remaining
+        tau_norm = 1.0 - self.tire_degradation  # Tire condition (inverse degradation)
+        
+        # Strategy parameter: balance between aggression (speed) and conservation (energy/tires)
+        psi = (v_norm + tau_norm + e_norm) / 3.0
+        
+        # Weighted sum
+        P = (
+            weights['velocity'] * v_norm +
+            weights['acceleration'] * a_norm +
+            weights['energy'] * e_norm +
+            weights['tire'] * tau_norm +
+            weights['strategy'] * psi
+        )
+        
+        return P
+    
     def to_dict(self) -> Dict:
         """Convert state to dictionary for JSON export"""
         return {

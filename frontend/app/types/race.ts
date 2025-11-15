@@ -27,6 +27,10 @@ export interface Car {
   max_speed_achieved: number;
   overtakes_made: number;
   time: number;
+  // SimPulse features
+  performance_index?: number; // P_i(t) - Multi-objective performance metric
+  tire_temperature?: number;
+  acceleration?: number;
 }
 
 export interface RaceState {

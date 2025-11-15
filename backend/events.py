@@ -1,5 +1,29 @@
 """
 Probabilistic event system for Formula E race simulation
+Implements SimPulse stochastic event framework
+
+Mathematical Foundation:
+    Event Probability Models:
+    
+    1. Crash Probability (Logistic/Sigmoid):
+        P(crash) = base_prob × (1 + risk_factor × scale)
+        
+        Risk Factor:
+            R = Σ w_i · r_i(t)
+            Components: speed, tire degradation, aggression, proximity, energy stress
+    
+    2. Safety Car Deployment (Poisson Process):
+        P(event in [t, t+dt]) = 1 - exp(-λ·dt)
+        λ: Event rate (events per unit time)
+    
+    3. Mechanical Failures (Weibull Distribution):
+        Hazard rate: h(t) = (k/λ) · (t/λ)^(k-1)
+        k > 1: Increasing failure rate (wear-out)
+    
+    4. Overtaking Probability (Logistic Regression):
+        P(overtake) = 1 / (1 + exp(-β·Δx))
+        Δx: Feature vector (speed differential, attack mode, tire condition)
+
 Implements random events, crashes, safety cars, and strategic decisions
 """
 

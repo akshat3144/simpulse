@@ -37,8 +37,14 @@ connected_clients: List[WebSocket] = []
 
 
 def serialize_car(car: CarState) -> Dict[str, Any]:
-    """Convert CarState to JSON-serializable dict"""
+    """Convert CarState to JSON-serializable dict with SimPulse features"""
     import math
+    
+    # Calculate SimPulse Performance Index P_i(t)
+    try:
+        performance_index = car.get_performance_index()
+    except:
+        performance_index = 0.0  # Fallback if method not available
     
     return {
         "id": car.car_id,
@@ -67,7 +73,11 @@ def serialize_car(car: CarState) -> Dict[str, Any]:
         "total_energy_consumed": car.total_energy_consumed,
         "max_speed_achieved": car.max_speed_achieved,
         "overtakes_made": car.overtakes_made,
-        "time": car.time
+        "time": car.time,
+        # SimPulse features
+        "performance_index": round(performance_index, 4),  # P_i(t)
+        "tire_temperature": car.tire_temperature,
+        "acceleration": car.acceleration
     }
 
 

@@ -332,6 +332,8 @@ fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
 
 # Calculate lap times for each car
 lap_times = {}
+has_lap_data = False
+
 for car in cars:
     car_data = df[df['car_number'] == car].copy()
     car_data = car_data.sort_values('race_time')
@@ -347,20 +349,29 @@ for car in cars:
         for idx, row in lap_completions.iterrows():
             lap_num = row['current_lap']
             lap_time = row['race_time'] - prev_time
-            if lap_time > 0 and lap_time < 100:  # Sanity check
+            if lap_time > 0 and lap_time < 200:  # Increased sanity check to 200s for longer circuits
                 lap_numbers.append(lap_num)
                 lap_durations.append(lap_time)
             prev_time = row['race_time']
         
         if lap_durations:
             lap_times[car] = (lap_numbers, lap_durations)
-            ax1.plot(lap_numbers, lap_durations, 'o-', label=f'Car {car}', alpha=0.7)
+            ax1.plot(lap_numbers, lap_durations, 'o-', label=f'Car {car}', alpha=0.7, markersize=6)
+            has_lap_data = True
 
-ax1.set_xlabel('Lap Number', fontsize=11)
-ax1.set_ylabel('Lap Time (s)', fontsize=11)
-ax1.set_title('Lap Times by Car', fontsize=13, fontweight='bold')
-ax1.legend(ncol=5, fontsize=8)
-ax1.grid(True, alpha=0.3)
+if has_lap_data:
+    ax1.set_xlabel('Lap Number', fontsize=11)
+    ax1.set_ylabel('Lap Time (s)', fontsize=11)
+    ax1.set_title('Lap Times by Car', fontsize=13, fontweight='bold')
+    ax1.legend(ncol=5, fontsize=8)
+    ax1.grid(True, alpha=0.3)
+else:
+    # No lap completion data - show message
+    ax1.text(0.5, 0.5, 'No lap completion data available\n(Race may be too short or incomplete)', 
+            ha='center', va='center', fontsize=12, transform=ax1.transAxes)
+    ax1.set_title('Lap Times by Car - NO DATA', fontsize=13, fontweight='bold')
+    ax1.grid(True, alpha=0.3)
+    print("   ⚠️  No lap completion data found")
 
 # Average lap time per car
 avg_lap_times = []
@@ -384,6 +395,26 @@ if avg_lap_times:
     for i, bar in enumerate(bars):
         rank = np.where(sorted_indices == i)[0][0]
         bar.set_color(colors[rank])
+else:
+    # Alternative: Show lap progress instead of lap times
+    ax2.text(0.5, 0.5, 'Showing lap progress instead', 
+            ha='center', va='center', fontsize=10, transform=ax2.transAxes)
+    ax2.set_title('Average Lap Time - NO DATA', fontsize=13, fontweight='bold')
+    
+    # Show current lap for each car as alternative
+    for car in cars:
+        car_data = df[df['car_number'] == car]
+        max_lap = car_data['current_lap'].max()
+        ax2.text(car, max_lap, f'{max_lap}', ha='center', va='bottom', fontsize=10)
+    
+    if len(cars) > 0:
+        max_laps = [df[df['car_number'] == car]['current_lap'].max() for car in cars]
+        ax2.bar(range(len(cars)), max_laps, alpha=0.7, edgecolor='black')
+        ax2.set_xticks(range(len(cars)))
+        ax2.set_xticklabels([f'Car {c}' for c in cars], rotation=45, ha='right')
+        ax2.set_ylabel('Laps Completed', fontsize=11)
+        ax2.set_title('Laps Completed by Car (Alternative View)', fontsize=13, fontweight='bold')
+        ax2.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
 plt.savefig(output_dir / '8_lap_times.png', dpi=150, bbox_inches='tight')

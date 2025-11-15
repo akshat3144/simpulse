@@ -1,13 +1,41 @@
 """
 Comprehensive Physics Engine for Formula E Simulation
-Implements realistic driver controls, corner handling, and physics-based motion
-NO ML/AI - Pure physics and realistic driver logic
+Implements SimPulse stochastic dynamics framework
+
+Mathematical Foundation (SimPulse):
+    State Evolution: x(t+1) = f(x(t), u(t), θ(t)) + ε(t)
+    
+    Where:
+        x(t) ∈ ℝⁿ: State vector (velocity, position, energy, temperature, tire condition)
+        u(t) ∈ ℝᵐ: Control vector (throttle, brake, steering, attack mode)
+        θ(t) ∈ ℝᵏ: Environmental parameters (weather, track grip, temperature)
+        ε(t) ~ N(0, Σ): Gaussian process noise (driver inconsistency, measurement error)
+        f(): Deterministic physics transition function
+    
+    Performance Index:
+        P_i(t) = w₁·v(t) + w₂·a(t) + w₃·e(t) + w₄·τ(t) + w₅·ψ(t)
+        
+        Components:
+            v(t): Velocity factor
+            a(t): Acceleration capability
+            e(t): Energy efficiency
+            τ(t): Tire condition
+            ψ(t): Strategy parameter (aggression vs conservation)
+
+Realistic driver controls, corner handling, and physics-based motion
+Integrates stochastic noise for realistic uncertainty
 """
 
 import numpy as np
 from typing import Tuple
 from .config import PhysicsConfig, TrackConfig, WeatherConditions, CarConfiguration
 from .state import CarState
+
+try:
+    from .stochastic_dynamics import StochasticNoiseModel
+    STOCHASTIC_AVAILABLE = True
+except ImportError:
+    STOCHASTIC_AVAILABLE = False
 
 
 class DriverController:
@@ -275,11 +303,20 @@ class DriverController:
 class PhysicsEngine:
     """
     Main physics engine with realistic motion model
+    
+    Implements SimPulse deterministic dynamics f(x,u,θ) plus stochastic noise ε(t)
     """
     
-    def __init__(self, track_config: TrackConfig):
+    def __init__(self, track_config: TrackConfig, enable_stochastic: bool = True, noise_seed: int = None):
         self.track_config = track_config
         self.weather = WeatherConditions()
+        self.enable_stochastic = enable_stochastic
+        
+        # Initialize stochastic noise model
+        if enable_stochastic and STOCHASTIC_AVAILABLE:
+            self.noise_model = StochasticNoiseModel(seed=noise_seed)
+        else:
+            self.noise_model = None
     
     def update_car_physics(
         self,
@@ -295,8 +332,16 @@ class PhysicsEngine:
         """
         Update car physics for one timestep
         
+        SimPulse State Transition: x(t+1) = f(x(t), u(t), θ(t)) + ε(t)
+        
+        Steps:
+            1. Calculate control inputs u(t) from driver model
+            2. Apply deterministic physics f(x,u,θ)
+            3. Add stochastic noise ε(t) ~ N(0, Σ)
+            4. Update auxiliary states (battery, tires, temperature)
+        
         Args:
-            car: Car state to update
+            car: Car state to update (x(t))
             dt: Timestep duration (seconds)
             driver_config: Dict with 'skill', 'aggression', 'consistency'
             race_position: Current position in race
@@ -326,12 +371,18 @@ class PhysicsEngine:
             for zone in self.track_config.attack_mode_zones
         )
         
-        # Get control inputs from driver model
+        # Get control inputs from driver model (u(t) in MDP formulation)
         throttle, brake, steering, activate_attack = DriverController.calculate_controls(
             car, segment, self.track_config, driver_skill, driver_aggression,
             driver_consistency, race_position, gap_to_ahead, car.gap_to_leader,
             laps_remaining, in_attack_zone, self.weather
         )
+        
+        # Apply control noise from driver imperfection (part of ε(t))
+        if self.noise_model is not None:
+            throttle, brake, steering = self.noise_model.apply_control_noise(
+                throttle, brake, steering, driver_consistency
+            )
         
         # Activate attack mode if decided
         if activate_attack:
@@ -592,12 +643,19 @@ class PhysicsEngine:
         if car.get_speed() > car.max_speed_achieved:
             car.max_speed_achieved = car.get_speed()
         
-        # Update battery
+        # Update battery (with stochastic consumption noise)
         net_energy = energy_regen - energy_consumed
         if config:
             net_energy *= config.battery_efficiency
         
-        car.battery_energy += net_energy
+        # Apply energy consumption noise (battery efficiency variations)
+        if self.noise_model is not None and energy_consumed > 0:
+            noisy_consumption = self.noise_model.apply_energy_consumption_noise(
+                energy_consumed, car.battery_temperature
+            )
+            net_energy = energy_regen - noisy_consumption
+        
+        car.update_battery(net_energy)
         car.battery_energy = np.clip(car.battery_energy, 0.0, PhysicsConfig.BATTERY_CAPACITY_J)
         car.battery_percentage = (car.battery_energy / PhysicsConfig.BATTERY_CAPACITY_J) * 100.0
         
@@ -609,6 +667,12 @@ class PhysicsEngine:
         tire_deg_rate += PhysicsConfig.TIRE_K_SPEED * (current_speed ** 2) * 0.001
         tire_deg_rate += PhysicsConfig.TIRE_K_LATERAL * (abs(a_lat) ** 2) * 0.001
         tire_deg_rate *= (1.0 + driver_aggression * 0.3)
+        
+        # Apply stochastic tire degradation noise
+        if self.noise_model is not None:
+            tire_deg_rate = self.noise_model.apply_tire_degradation_noise(
+                tire_deg_rate, car.tire_temperature
+            )
         
         car.tire_degradation += tire_deg_rate * dt
         car.tire_degradation = np.clip(car.tire_degradation, 0.0, 1.0)
@@ -656,6 +720,10 @@ class PhysicsEngine:
         
         # Update time
         car.time += dt
+        
+        # Apply process noise to state (final stochastic term ε(t))
+        if self.noise_model is not None:
+            self.noise_model.apply_process_noise(car, driver_consistency, dt)
         
         # Check if out of energy
         if car.battery_percentage < 0.5:

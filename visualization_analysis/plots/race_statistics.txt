@@ -4,102 +4,102 @@ FORMULA E SIMULATION STATISTICS
 
 RACE OVERVIEW
 ----------------------------------------
-Total Race Time: 1646.80 seconds
+Total Race Time: 1833.50 seconds
 Number of Cars: 10
-Total Timesteps: 329360
-Timesteps per Car: 32936
+Total Timesteps: 366700
+Timesteps per Car: 36670
 Average dt: 0.0500 seconds
 
 POSITION STATISTICS
 ----------------------------------------
-Position X Range: -601.13 to 337.41 m
+Position X Range: -601.15 to 337.44 m
 Position Y Range: 0.00 to 1911.45 m
-Total Track Span: 2129.44 m
+Total Track Span: 2129.46 m
 
 SPEED STATISTICS
 ----------------------------------------
-Min Speed: 3.20 km/h
-Max Speed: 246.40 km/h
-Average Speed: 97.23 km/h
-Speed Std Dev: 32.01 km/h
+Min Speed: 0.00 km/h
+Max Speed: 210.30 km/h
+Average Speed: 87.84 km/h
+Speed Std Dev: 24.07 km/h
 
 STEERING STATISTICS
 ----------------------------------------
 Max Left Steering: -6.42°
 Max Right Steering: 6.42°
-Non-zero Steering: 235572 / 329360 timesteps (71.5%)
+Non-zero Steering: 268244 / 366700 timesteps (73.2%)
 
 ENERGY STATISTICS
 ----------------------------------------
 Car 0:
-  Energy Consumed: 45.000 kWh
-  Energy Regenerated: 6.606 kWh
-  Net Energy: 38.394 kWh
-  Final SOC: 2470.0%
+  Energy Consumed: 32.061 kWh
+  Energy Regenerated: 5.200 kWh
+  Net Energy: 26.861 kWh
+  Final SOC: 4730.0%
 Car 1:
-  Energy Consumed: 45.022 kWh
-  Energy Regenerated: 6.331 kWh
-  Net Energy: 38.692 kWh
-  Final SOC: 2410.0%
+  Energy Consumed: 31.578 kWh
+  Energy Regenerated: 5.008 kWh
+  Net Energy: 26.569 kWh
+  Final SOC: 4790.0%
 Car 2:
-  Energy Consumed: 43.453 kWh
-  Energy Regenerated: 6.233 kWh
-  Net Energy: 37.219 kWh
-  Final SOC: 2700.0%
+  Energy Consumed: 32.256 kWh
+  Energy Regenerated: 4.903 kWh
+  Net Energy: 27.353 kWh
+  Final SOC: 4640.0%
 Car 3:
-  Energy Consumed: 45.381 kWh
-  Energy Regenerated: 6.772 kWh
-  Net Energy: 38.608 kWh
-  Final SOC: 2430.0%
+  Energy Consumed: 31.047 kWh
+  Energy Regenerated: 5.050 kWh
+  Net Energy: 25.997 kWh
+  Final SOC: 4900.0%
 Car 4:
-  Energy Consumed: 45.147 kWh
-  Energy Regenerated: 6.375 kWh
-  Net Energy: 38.772 kWh
-  Final SOC: 2400.0%
+  Energy Consumed: 32.717 kWh
+  Energy Regenerated: 5.022 kWh
+  Net Energy: 27.694 kWh
+  Final SOC: 4570.0%
 Car 5:
-  Energy Consumed: 44.319 kWh
-  Energy Regenerated: 6.656 kWh
-  Net Energy: 37.664 kWh
-  Final SOC: 2620.0%
+  Energy Consumed: 31.419 kWh
+  Energy Regenerated: 5.361 kWh
+  Net Energy: 26.058 kWh
+  Final SOC: 4890.0%
 Car 6:
-  Energy Consumed: 44.414 kWh
-  Energy Regenerated: 6.619 kWh
-  Net Energy: 37.794 kWh
-  Final SOC: 2590.0%
+  Energy Consumed: 17.206 kWh
+  Energy Regenerated: 2.644 kWh
+  Net Energy: 14.561 kWh
+  Final SOC: 7140.0%
 Car 7:
-  Energy Consumed: 44.417 kWh
-  Energy Regenerated: 6.456 kWh
-  Net Energy: 37.961 kWh
-  Final SOC: 2560.0%
+  Energy Consumed: 30.903 kWh
+  Energy Regenerated: 5.069 kWh
+  Net Energy: 25.833 kWh
+  Final SOC: 4930.0%
 Car 8:
-  Energy Consumed: 45.447 kWh
-  Energy Regenerated: 6.822 kWh
-  Net Energy: 38.625 kWh
-  Final SOC: 2430.0%
+  Energy Consumed: 32.150 kWh
+  Energy Regenerated: 5.300 kWh
+  Net Energy: 26.850 kWh
+  Final SOC: 4740.0%
 Car 9:
-  Energy Consumed: 43.328 kWh
-  Energy Regenerated: 6.703 kWh
-  Net Energy: 36.625 kWh
-  Final SOC: 2820.0%
+  Energy Consumed: 31.633 kWh
+  Energy Regenerated: 5.192 kWh
+  Net Energy: 26.442 kWh
+  Final SOC: 4820.0%
 
 BATTERY TEMPERATURE
 ----------------------------------------
-Min Temperature: 37.10°C
-Max Temperature: 43.40°C
-Average Temperature: 39.84°C
+Min Temperature: 32.90°C
+Max Temperature: 42.40°C
+Average Temperature: 38.25°C
 
 TIRE DEGRADATION
 ----------------------------------------
-Car 0: 0.37%
-Car 1: 0.37%
-Car 2: 0.37%
-Car 3: 0.37%
-Car 4: 0.37%
-Car 5: 0.36%
-Car 6: 0.37%
-Car 7: 0.36%
-Car 8: 0.36%
-Car 9: 0.37%
+Car 0: 9.10%
+Car 1: 9.06%
+Car 2: 9.27%
+Car 3: 8.82%
+Car 4: 9.13%
+Car 5: 8.92%
+Car 6: 4.75%
+Car 7: 9.06%
+Car 8: 8.93%
+Car 9: 9.07%
 
 ATTACK MODE USAGE
 ----------------------------------------
@@ -136,13 +136,13 @@ Car 9:
 
 FINAL CLASSIFICATION
 ----------------------------------------
-P1: Car 3 - 15 laps
-P2: Car 4 - 15 laps
-P3: Car 1 - 15 laps
-P4: Car 0 - 14 laps
-P5: Car 7 - 14 laps
-P6: Car 2 - 14 laps
-P7: Car 6 - 14 laps
-P8: Car 5 - 14 laps
-P9: Car 8 - 14 laps
-P10: Car 9 - 14 laps
+P1: Car 4 - 15 laps
+P2: Car 0 - 14 laps
+P3: Car 7 - 14 laps
+P4: Car 2 - 14 laps
+P5: Car 5 - 14 laps
+P6: Car 1 - 14 laps
+P7: Car 8 - 14 laps
+P8: Car 9 - 14 laps
+P9: Car 3 - 14 laps
+P10: Car 6 - 7 laps

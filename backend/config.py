@@ -394,6 +394,12 @@ class SimulationConfig:
     ENABLE_BATTERY_TEMPS: bool = True
     ENABLE_DRIVER_FATIGUE: bool = True
     ENABLE_STOCHASTIC_EVENTS: bool = True  # Random mechanical failures, etc.
+    
+    # SimPulse Framework Features
+    ENABLE_STOCHASTIC_DYNAMICS: bool = True  # Gaussian noise ε(t) ~ N(0,Σ)
+    ENABLE_MDP_LOGGING: bool = True  # Log state-action-reward trajectories
+    ENABLE_PERFORMANCE_INDEX: bool = True  # Calculate P_i(t) for all cars
+    NOISE_INTENSITY: float = 1.0  # Scale factor for all noise (0=deterministic, 1=default)
 
 
 class DriverConfig:
