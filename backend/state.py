@@ -34,7 +34,8 @@ class CarState:
     
     # Tire state
     tire_degradation: float = 0.0  # 0-1 (0=new, 1=completely worn)
-    grip_coefficient: float = 1.2  # Current grip level
+    tire_temperature: float = 70.0  # Celsius (tire operating temperature)
+    grip_coefficient: float = 1.8  # Current grip level (Gen3 tires)
     
     # Attack mode
     attack_mode_active: bool = False

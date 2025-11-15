@@ -9,13 +9,16 @@ from .config import (
     PhysicsConfig,
     TrackConfig,
     SimulationConfig,
-    MLConfig,
-    DriverConfig
+    DriverConfig,
+    WeatherConditions,
+    CarConfiguration
 )
 from .leaderboard import Leaderboard, PerformanceMetrics
-from .physics import PhysicsEngine, MotionModel, EnergyModel, TireModel
+from .physics import PhysicsEngine
 from .events import EventGenerator, StrategyDecisionMaker
-from .ml_strategy import RacingLinePredictor, EnergyManagementQLearning, MLStrategyCoordinator
+from .qualifying import QualifyingSession
+from .race_control import RaceControlSystem, FlagType, PenaltyType, Penalty
+from .weather import DynamicWeatherSystem, WeatherState
 
 # Visualization (optional import - requires matplotlib)
 try:
@@ -27,7 +30,7 @@ except ImportError:
     LiveRaceAnimator = None
     create_post_race_analysis = None
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__ = "Formula E Simulator Team"
 
 __all__ = [
@@ -42,8 +45,9 @@ __all__ = [
     'PhysicsConfig',
     'TrackConfig',
     'SimulationConfig',
-    'MLConfig',
     'DriverConfig',
+    'WeatherConditions',
+    'CarConfiguration',
     
     # Leaderboard and metrics
     'Leaderboard',
@@ -51,18 +55,23 @@ __all__ = [
     
     # Physics models
     'PhysicsEngine',
-    'MotionModel',
-    'EnergyModel',
-    'TireModel',
     
     # Event system
     'EventGenerator',
     'StrategyDecisionMaker',
     
-    # ML components
-    'RacingLinePredictor',
-    'EnergyManagementQLearning',
-    'MLStrategyCoordinator',
+    # Qualifying
+    'QualifyingSession',
+    
+    # Race control
+    'RaceControlSystem',
+    'FlagType',
+    'PenaltyType',
+    'Penalty',
+    
+    # Weather
+    'DynamicWeatherSystem',
+    'WeatherState',
     
     # Visualization (optional)
     'RaceVisualizer',

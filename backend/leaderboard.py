@@ -35,8 +35,20 @@ class LeaderboardEntry:
         self.speed_kmh = car.get_speed_kmh()
         self.total_distance = car.total_distance
     
-    def to_dict(self) -> Dict:
-        """Convert to dictionary for export"""
+    def to_dict(self, race_finished: bool = False) -> Dict:
+        """Convert to dictionary for export
+        
+        Args:
+            race_finished: Whether the race has finished
+        """
+        # Determine status
+        if not self.is_active:
+            status = 'Retired'
+        elif race_finished:
+            status = 'Finished'
+        else:
+            status = 'Running'
+            
         return {
             'position': self.position,
             'driver_name': self.driver_name,
@@ -50,7 +62,7 @@ class LeaderboardEntry:
             'attack_mode_active': self.attack_mode_active,
             'attack_mode_uses': self.attack_mode_uses_left,
             'speed_kmh': round(self.speed_kmh, 1),
-            'status': 'Running' if self.is_active else 'Retired'
+            'status': status
         }
     
     def to_string(self) -> str:

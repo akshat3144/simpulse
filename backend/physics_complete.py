@@ -431,18 +431,6 @@ class PhysicsEngine:
         if car.lap_distance >= self.track_config.total_length:
             car.current_lap += 1
             car.lap_distance -= self.track_config.total_length
-            
-            # Record lap time (if we have a valid lap start time)
-            if car.current_lap > 1 and car.time > 0:  # Skip lap 0 (formation lap)
-                lap_time = car.time - car.sector_start_time
-                car.last_lap_time = lap_time
-                
-                # Update best lap time
-                if lap_time < car.best_lap_time:
-                    car.best_lap_time = lap_time
-                
-                # Reset lap timer
-                car.sector_start_time = car.time
         
         # Update max speed
         if car.get_speed() > car.max_speed_achieved:

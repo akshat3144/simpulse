@@ -5,7 +5,6 @@ Implements random events, crashes, safety cars, and strategic decisions
 
 import numpy as np
 from typing import List, Dict, Tuple, Optional
-from scipy.stats import poisson, norm
 from .state import CarState, RaceState
 from .config import PhysicsConfig
 
@@ -70,22 +69,18 @@ class EventGenerator:
         proximity_risk = min(other_cars_nearby / 5.0, 1.0)  # 0-1
         energy_stress = max(0, 1.0 - car.battery_percentage / 100.0)  # Low energy = more risk
         
-        # Combined risk factor
+        # Combined risk factor (additive, normalized to 0-1 range)
         risk_factor = (
-            speed_risk * 30 +
-            tire_risk * 25 +
-            aggression_risk * 20 +
-            proximity_risk * 15 +
-            energy_stress * 10
+            speed_risk * 0.30 +
+            tire_risk * 0.25 +
+            aggression_risk * 0.20 +
+            proximity_risk * 0.15 +
+            energy_stress * 0.10
         )
         
-        # Sigmoid probability
-        k = PhysicsConfig.CRASH_SIGMOID_K
-        x0 = PhysicsConfig.CRASH_SIGMOID_X0
-        crash_probability = 1.0 / (1.0 + np.exp(-k * (risk_factor - x0)))
-        
-        # Very low base probability (crashes are rare)
-        crash_probability *= 0.001
+        # Simplified crash probability
+        # Base probability scaled by risk (exponential scaling for realism)
+        crash_probability = PhysicsConfig.CRASH_BASE_PROBABILITY * (1.0 + risk_factor * 50.0)
         
         # Random check
         if self.rng.random() < crash_probability:
@@ -122,9 +117,8 @@ class EventGenerator:
         if current_lap < 2 or (current_lap - self.last_safety_car_lap) < 5:
             return False, None
         
-        # Poisson probability
-        lambda_rate = PhysicsConfig.SAFETY_CAR_LAMBDA
-        probability = 1.0 - np.exp(-lambda_rate)
+        # Simple probability per lap
+        probability = PhysicsConfig.SAFETY_CAR_PROBABILITY / total_laps
         
         # Increase probability if there have been crashes
         recent_crashes = len([e for e in self.events 
