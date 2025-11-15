@@ -15,8 +15,8 @@ from pathlib import Path
 
 # Load data
 print("Loading race data...")
-data_dir = Path(__file__).parent.parent / "race_output"
-df = pd.read_csv(data_dir / "race_data_timesteps.csv")
+data_dir = Path(__file__).parent.parent / "backend" / "race_output"
+df = pd.read_csv(data_dir / "race_timesteps.csv")
 
 # Rename columns for consistency
 df = df.rename(columns={

@@ -4,6 +4,11 @@ Includes: Qualifying, Race Control, Dynamic Weather, JSON/CSV Export
 """
 
 import os
+import sys
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from backend import (
     FormulaERaceEngine,
     QualifyingSession,
@@ -25,8 +30,8 @@ def main():
     num_laps = 15
     random_seed = 42
     
-    # Create output directory
-    output_dir = "race_output"
+    # Create output directory in backend folder
+    output_dir = os.path.join(os.path.dirname(__file__), "race_output")
     os.makedirs(output_dir, exist_ok=True)
     
     # =======================
@@ -213,7 +218,7 @@ def main():
     # Export timestep data (JSON and CSV)
     print("Exporting timestep data...")
     engine.export_timestep_data_json(f"{output_dir}/race_data_complete.json")
-    engine.export_timestep_data_csv(f"{output_dir}/race_data_timesteps.csv")
+    engine.export_timestep_data_csv(f"{output_dir}/race_timesteps.csv")
     
     # Export events
     print("\nExporting events...")
@@ -234,19 +239,10 @@ def main():
     print("\nFiles created:")
     print("  - qualifying_results.csv")
     print("  - race_data_complete.json (full timestep history)")
-    print("  - race_data_timesteps.csv (all car states per timestep)")
+    print("  - race_timesteps.csv (all car states per timestep)")
     print("  - race_events.csv")
     print("  - race_penalties.csv")
     print("  - final_leaderboard.csv")
-    print()
-    print("Features demonstrated:")
-    print("  ✓ Qualifying session with realistic lap times")
-    print("  ✓ Physics-based race simulation (NO ML/AI)")
-    print("  ✓ Dynamic weather system with grip effects")
-    print("  ✓ Race control (flags, penalties, safety car)")
-    print("  ✓ Complete JSON and CSV data export")
-    print("  ✓ Much lower crash probability (realistic DNF rates)")
-    print()
 
 if __name__ == "__main__":
     main()

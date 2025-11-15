@@ -509,7 +509,6 @@ class FormulaERaceEngine:
         print(f"✓ Timestep data exported to {filepath}")
         print(f"  - Total timesteps: {len(self.timestep_history)}")
         print(f"  - Total time: {self.race_state.current_time:.1f}s")
-        print(f"  - File size: {len(json.dumps(export_data)) / 1024:.1f} KB")
     
     def export_timestep_data_csv(self, filepath: str):
         """
