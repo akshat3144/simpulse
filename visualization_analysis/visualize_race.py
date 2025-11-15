@@ -16,7 +16,7 @@ sns.set_palette("husl")
 # Load data
 print("Loading race data...")
 data_dir = Path(__file__).parent.parent / "backend" / "race_output"
-df = pd.read_csv(data_dir / "race_timesteps.csv")
+df = pd.read_csv(data_dir / "race_timesteps.csv", encoding='latin-1')
 
 # Rename columns for consistency
 df = df.rename(columns={

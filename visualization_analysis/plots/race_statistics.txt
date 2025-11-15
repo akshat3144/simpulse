@@ -25,8 +25,8 @@ Speed Std Dev: 51.78 km/h
 
 STEERING STATISTICS
 ----------------------------------------
-Max Left Steering: -0.29째
-Max Right Steering: 3.32째
+Max Left Steering: -0.29�
+Max Right Steering: 3.32�
 Non-zero Steering: 86789 / 135830 timesteps (63.9%)
 
 ENERGY STATISTICS
@@ -84,9 +84,9 @@ Car 9:
 
 BATTERY TEMPERATURE
 ----------------------------------------
-Min Temperature: 38.80째C
-Max Temperature: 43.40째C
-Average Temperature: 41.42째C
+Min Temperature: 38.80캜
+Max Temperature: 43.40캜
+Average Temperature: 41.42캜
 
 TIRE DEGRADATION
 ----------------------------------------

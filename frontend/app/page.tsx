@@ -1,147 +1,65 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import useWebSocket from "./hooks/useWebSocket";
-import { RaceState, WebSocketMessage } from "./types/race";
-import Leaderboard from "./components/Leaderboard";
-import TrackView from "./components/TrackView";
-import ControlPanel from "./components/ControlPanel";
-import EnergyChart from "./components/EnergyChart";
+import Image from "next/image";
 
 export default function Home() {
-  const WS_URL = "ws://localhost:8000/ws/race";
-  const { isConnected, lastMessage, sendMessage } = useWebSocket(WS_URL);
-
-  const [raceState, setRaceState] = useState<RaceState | null>(null);
-  const [raceActive, setRaceActive] = useState(false);
-
-  // Handle WebSocket messages
-  useEffect(() => {
-    if (lastMessage) {
-      const message = lastMessage as WebSocketMessage;
-
-      if (message.type === "initial_state" || message.type === "race_update") {
-        setRaceState(message.data);
-
-        // Update race active status
-        if (message.data.race_finished) {
-          setRaceActive(false);
-        }
-      }
-    }
-  }, [lastMessage]);
-
-  // Create race via REST API
-  const handleCreateRace = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:8000/race/create?num_cars=12&num_laps=5",
-        {
-          method: "POST",
-        }
-      );
-      const data = await response.json();
-      console.log("Race created:", data);
-      alert("Race created! Click Start to begin.");
-    } catch (error) {
-      console.error("Error creating race:", error);
-      alert("Failed to create race. Make sure backend is running.");
-    }
-  };
-
-  // Start race via WebSocket
-  const handleStart = () => {
-    sendMessage({ command: "start" });
-    setRaceActive(true);
-  };
-
-  // Pause race via WebSocket
-  const handlePause = () => {
-    sendMessage({ command: "pause" });
-    setRaceActive(false);
-  };
-
   return (
-    <div className="min-h-screen bg-black text-white p-8">
-      {/* Header */}
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">🏎️ Formula E Race Dashboard</h1>
-        <p className="text-gray-400">
-          Real-time race simulation powered by FastAPI + Next.js + D3.js
-        </p>
-      </header>
-
-      {/* Control Panel */}
-      <div className="mb-6">
-        <ControlPanel
-          isConnected={isConnected}
-          raceActive={raceActive}
-          onStart={handleStart}
-          onPause={handlePause}
-          onCreateRace={handleCreateRace}
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+        <Image
+          className="dark:invert"
+          src="/next.svg"
+          alt="Next.js logo"
+          width={100}
+          height={20}
+          priority
         />
-      </div>
-
-      {/* Race Stats */}
-      {raceState && (
-        <div className="mb-6 grid grid-cols-4 gap-4">
-          <div className="bg-gray-900 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">Race Time</p>
-            <p className="text-2xl font-bold">
-              {raceState.current_time.toFixed(1)}s
-            </p>
-          </div>
-          <div className="bg-gray-900 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">Current Lap</p>
-            <p className="text-2xl font-bold">{raceState.current_lap}</p>
-          </div>
-          <div className="bg-gray-900 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">Active Cars</p>
-            <p className="text-2xl font-bold">
-              {raceState.active_cars}/{raceState.total_cars}
-            </p>
-          </div>
-          <div className="bg-gray-900 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">Status</p>
-            <p className="text-2xl font-bold">
-              {raceState.race_finished
-                ? "🏁 Finished"
-                : raceActive
-                ? "🏎️ Racing"
-                : "⏸️ Paused"}
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Main Content */}
-      {raceState ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Leaderboard */}
-          <div className="lg:col-span-1">
-            <Leaderboard cars={raceState.cars} />
-          </div>
-
-          {/* Right Column - Visualizations */}
-          <div className="lg:col-span-2 space-y-6">
-            <TrackView cars={raceState.cars} trackLength={2500} />
-            <EnergyChart cars={raceState.cars} />
-          </div>
-        </div>
-      ) : (
-        <div className="text-center py-20">
-          <p className="text-gray-400 text-xl mb-4">
-            {isConnected
-              ? "Click 'Create Race' to start"
-              : "Connecting to server..."}
+        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
+          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+            To get started, edit the page.tsx file.
+          </h1>
+          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+            Looking for a starting point or more instructions? Head over to{" "}
+            <a
+              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+              className="font-medium text-zinc-950 dark:text-zinc-50"
+            >
+              Templates
+            </a>{" "}
+            or the{" "}
+            <a
+              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+              className="font-medium text-zinc-950 dark:text-zinc-50"
+            >
+              Learning
+            </a>{" "}
+            center.
           </p>
-          {!isConnected && (
-            <p className="text-red-400">
-              Make sure the backend is running on port 8000
-            </p>
-          )}
         </div>
-      )}
+        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+          <a
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
+            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              className="dark:invert"
+              src="/vercel.svg"
+              alt="Vercel logomark"
+              width={16}
+              height={16}
+            />
+            Deploy Now
+          </a>
+          <a
+            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
+            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Documentation
+          </a>
+        </div>
+      </main>
     </div>
   );
 }
