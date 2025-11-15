@@ -277,6 +277,55 @@ def example_4_compare_strategies():
     return engine_ml, engine_simple
 
 
+def example_5_live_animation():
+    """
+    Example 5: Live animation showing cars racing on track
+    Top-down view with cars moving in real-time
+    """
+    print("\n" + "="*80)
+    print("EXAMPLE 5: Live Race Animation")
+    print("="*80)
+    print("\nThis will open a window showing:")
+    print("  - Top-down track view (START to FINISH)")
+    print("  - Cars moving in real-time as colored dots")
+    print("  - Live race information (time, laps, leader)")
+    print("\nControls:")
+    print("  - SPACE: Pause/Resume")
+    print("  - Q: Quit")
+    print("\nStarting race animation...")
+    
+    # Import the animator
+    from formula_e_simulator.visualization import LiveRaceAnimator
+    
+    # Create race engine
+    engine = FormulaERaceEngine(
+        num_cars=12,
+        num_laps=5
+    )
+    
+    # Get track length from config
+    track_length = engine.track_config.total_length
+    
+    # Create animator
+    animator = LiveRaceAnimator(
+        track_length=track_length,
+        num_cars=12
+    )
+    
+    # Setup figure
+    animator.setup_figure()
+    
+    print("\n✅ Animation window opened!")
+    print("   Watch the cars race across the track!")
+    print("   Press SPACE to pause, Q to quit")
+    
+    # Run animation (this blocks until window closed)
+    animator.animate_race(engine, interval=50)
+    
+    print("\n✅ Animation finished!")
+    print(f"   Race completed in {engine.race_state.current_time:.1f}s")
+
+
 def main():
     """Run visualization examples"""
     print("\n🎨 FORMULA E SIMULATOR - VISUALIZATION EXAMPLES")
@@ -286,10 +335,11 @@ def main():
     print("  2. Post-race analysis (comprehensive statistics)")
     print("  3. Snapshot recording (save images during race)")
     print("  4. Strategy comparison (ML vs Simple AI)")
-    print("  5. Run all examples")
+    print("  5. Live animation (cars racing on track) ⭐ NEW!")
+    print("  6. Run all examples")
     print()
     
-    choice = input("Select example (1-5) or press Enter for #1: ").strip()
+    choice = input("Select example (1-6) or press Enter for #1: ").strip()
     
     if not choice:
         choice = "1"
@@ -304,6 +354,8 @@ def main():
         elif choice == "4":
             example_4_compare_strategies()
         elif choice == "5":
+            example_5_live_animation()
+        elif choice == "6":
             example_1_live_visualization()
             time.sleep(2)
             example_2_post_race_analysis()
@@ -311,6 +363,8 @@ def main():
             example_3_snapshot_recording()
             time.sleep(2)
             example_4_compare_strategies()
+            time.sleep(2)
+            example_5_live_animation()
         else:
             print("Invalid choice. Running example 1...")
             example_1_live_visualization()

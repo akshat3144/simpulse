@@ -522,3 +522,271 @@ def create_post_race_analysis(race_state: RaceState, event_log: List):
     plt.tight_layout()
     return fig
 
+
+class LiveRaceAnimator:
+    """
+    Live animation showing top-down view of cars racing on track
+    Cars move in real-time as the simulation progresses
+    """
+    
+    def __init__(self, track_length: float = 2500.0, num_cars: int = 24):
+        """
+        Initialize animator
+        
+        Args:
+            track_length: Track length in meters
+            num_cars: Number of cars in the race
+        """
+        self.track_length = track_length
+        self.num_cars = num_cars
+        
+        # Display settings
+        self.screen_margin = 100  # pixels
+        self.track_start_x = self.screen_margin
+        self.track_end_x = 1000 - self.screen_margin
+        self.track_y = 300  # vertical position of track
+        
+        # Colors for cars
+        self.colors = plt.cm.rainbow(np.linspace(0, 1, num_cars))
+        
+        # Animation state
+        self.fig = None
+        self.ax = None
+        self.scatter = None
+        self.info_text = None
+        self.lap_text = None
+        self.leader_text = None
+        self.anim = None
+        self.paused = False
+        
+    def setup_figure(self):
+        """Create and setup the figure and track"""
+        self.fig, self.ax = plt.subplots(figsize=(12, 6))
+        self.fig.canvas.manager.set_window_title('Formula E Live Race Animation')
+        
+        # Setup axes
+        self.ax.set_xlim(0, 1000)
+        self.ax.set_ylim(0, 600)
+        self.ax.set_aspect('equal')
+        self.ax.axis('off')
+        
+        # Draw track
+        self._draw_track()
+        
+        # Create scatter plot for cars (initially at start)
+        x_positions = np.full(self.num_cars, self.track_start_x)
+        y_positions = np.linspace(self.track_y - 40, self.track_y + 40, self.num_cars)
+        
+        self.scatter = self.ax.scatter(
+            x_positions, y_positions,
+            c=self.colors, s=200, marker='o',
+            edgecolors='black', linewidths=2,
+            alpha=0.8, zorder=10
+        )
+        
+        # Info text panels
+        self.info_text = self.ax.text(
+            500, 500, '', fontsize=14, ha='center',
+            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8)
+        )
+        
+        self.lap_text = self.ax.text(
+            100, 500, '', fontsize=12, ha='left',
+            bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8)
+        )
+        
+        self.leader_text = self.ax.text(
+            900, 500, '', fontsize=12, ha='right',
+            bbox=dict(boxstyle='round', facecolor='gold', alpha=0.8)
+        )
+        
+        # Title
+        self.ax.text(500, 550, 'Formula E Race - Live Animation',
+                    fontsize=18, ha='center', fontweight='bold')
+        
+        # Keyboard controls
+        self.fig.canvas.mpl_connect('key_press_event', self._on_key_press)
+        
+    def _draw_track(self):
+        """Draw the race track"""
+        # Main track line
+        self.ax.plot(
+            [self.track_start_x, self.track_end_x],
+            [self.track_y, self.track_y],
+            'k-', linewidth=8, alpha=0.5, zorder=1
+        )
+        
+        # Start line (green)
+        self.ax.plot(
+            [self.track_start_x, self.track_start_x],
+            [self.track_y - 50, self.track_y + 50],
+            'g-', linewidth=6, alpha=0.8, zorder=2
+        )
+        self.ax.text(
+            self.track_start_x, self.track_y - 70,
+            'START', fontsize=12, ha='center',
+            fontweight='bold', color='green'
+        )
+        
+        # Finish line (checkered pattern)
+        for i in range(10):
+            y_start = self.track_y - 50 + i * 10
+            color = 'black' if i % 2 == 0 else 'white'
+            self.ax.plot(
+                [self.track_end_x, self.track_end_x],
+                [y_start, y_start + 10],
+                color=color, linewidth=6, alpha=0.8, zorder=2
+            )
+        self.ax.text(
+            self.track_end_x, self.track_y - 70,
+            'FINISH', fontsize=12, ha='center',
+            fontweight='bold', color='red'
+        )
+        
+        # Distance markers every 500m
+        track_pixels = self.track_end_x - self.track_start_x
+        for distance in range(0, int(self.track_length) + 1, 500):
+            x_pos = self.track_start_x + (distance / self.track_length) * track_pixels
+            self.ax.plot(
+                [x_pos, x_pos],
+                [self.track_y - 5, self.track_y + 5],
+                'gray', linewidth=2, alpha=0.6, zorder=2
+            )
+            if distance > 0 and distance < self.track_length:
+                self.ax.text(
+                    x_pos, self.track_y + 15,
+                    f'{distance}m', fontsize=8, ha='center',
+                    color='gray'
+                )
+    
+    def _position_to_screen_x(self, position: float, lap: int) -> float:
+        """
+        Convert car position (meters) to screen X coordinate
+        
+        Args:
+            position: Distance along track (0 to track_length)
+            lap: Current lap number
+            
+        Returns:
+            X coordinate on screen
+        """
+        # Normalize position to 0-1 range
+        normalized = (position % self.track_length) / self.track_length
+        
+        # Convert to screen coordinates
+        track_pixels = self.track_end_x - self.track_start_x
+        screen_x = self.track_start_x + normalized * track_pixels
+        
+        return screen_x
+    
+    def update(self, race_state: RaceState) -> tuple:
+        """
+        Update animation with new race state
+        
+        Args:
+            race_state: Current race state
+            
+        Returns:
+            Tuple of updated artists
+        """
+        if self.paused:
+            return self.scatter, self.info_text, self.lap_text, self.leader_text
+        
+        # Get car positions
+        cars = race_state.cars
+        active_cars = [car for car in cars if car.is_active]
+        
+        if not active_cars:
+            return self.scatter, self.info_text, self.lap_text, self.leader_text
+        
+        # Calculate screen positions
+        x_positions = []
+        y_positions = []
+        
+        # Sort by position for y-coordinate assignment
+        sorted_cars = sorted(active_cars, key=lambda c: (-c.current_lap, -c.total_distance))
+        
+        for i, car in enumerate(sorted_cars):
+            x = self._position_to_screen_x(car.lap_distance, car.current_lap)
+            # Spread cars vertically based on their order
+            y = self.track_y + (i - len(sorted_cars) / 2) * 3
+            x_positions.append(x)
+            y_positions.append(y)
+        
+        # Update scatter plot
+        if x_positions:
+            positions = np.column_stack([x_positions, y_positions])
+            self.scatter.set_offsets(positions)
+            
+            # Update colors (highlight leader)
+            colors = [self.colors[i % self.num_cars] for i in range(len(sorted_cars))]
+            colors[0] = [1.0, 0.84, 0.0, 1.0]  # Gold for leader
+            self.scatter.set_facecolors(colors)
+        
+        # Update info text
+        self.info_text.set_text(
+            f"Time: {race_state.current_time:.1f}s\n"
+            f"Active Cars: {len(active_cars)}/{self.num_cars}"
+        )
+        
+        # Update lap info
+        if active_cars:
+            leader = sorted_cars[0]
+            # Calculate speed from velocity components
+            speed = np.sqrt(leader.velocity_x**2 + leader.velocity_y**2)
+            self.lap_text.set_text(
+                f"Current Lap: {leader.current_lap}\n"
+                f"Avg Speed: {speed * 3.6:.1f} km/h"
+            )
+            
+            # Leader info
+            self.leader_text.set_text(
+                f"🏆 Leader\n"
+                f"{leader.driver_name}\n"
+                f"Battery: {leader.battery_percentage:.1f}%"
+            )
+        
+        return self.scatter, self.info_text, self.lap_text, self.leader_text
+    
+    def _on_key_press(self, event):
+        """Handle keyboard events"""
+        if event.key == ' ':
+            self.paused = not self.paused
+            title = "PAUSED" if self.paused else "Formula E Race - Live Animation"
+            self.ax.text(500, 550, title,
+                        fontsize=18, ha='center', fontweight='bold')
+            plt.draw()
+        elif event.key == 'q':
+            plt.close()
+    
+    def animate_race(self, race_engine, interval: int = 50):
+        """
+        Animate the race using the race engine
+        
+        Args:
+            race_engine: FormulaERaceEngine instance
+            interval: Update interval in milliseconds (default 50ms = 20 FPS)
+        """
+        def update_frame(frame):
+            # Run simulation step
+            if not race_engine.race_finished and not self.paused:
+                race_engine.simulate_timestep()
+            
+            # Update animation
+            return self.update(race_engine.race_state)
+        
+        # Create animation
+        self.anim = animation.FuncAnimation(
+            self.fig, update_frame,
+            interval=interval,
+            blit=True,
+            cache_frame_data=False
+        )
+        
+        plt.show()
+    
+    def show(self, block: bool = True):
+        """Show the animation window"""
+        plt.show(block=block)
+
+
