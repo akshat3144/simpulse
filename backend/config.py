@@ -66,7 +66,7 @@ class PhysicsConfig:
     
     # Attack mode (official Formula E rules)
     ATTACK_MODE_POWER_BOOST_KW: float = 50.0  # 350kW -> 400kW (Gen3)
-    ATTACK_MODE_DURATION_SEC: float = 240.0  # 4 minutes per activation
+    ATTACK_MODE_DURATION_SEC: float = 40.0  # 4 minutes per activation
     ATTACK_MODE_ACTIVATIONS: int = 2  # 2 activations per race (typical)
     ATTACK_MODE_MIN_DURATION: float = 120.0  # Minimum 2 minutes
     ATTACK_MODE_SPEED_BOOST: float = 1.08  # ~8% speed increase
@@ -346,7 +346,7 @@ class TrackConfig:
 class SimulationConfig:
     """Simulation runtime parameters"""
     
-    TIMESTEP: float = 0.05  # seconds (1000 Hz simulation for maximum accuracy)
+    TIMESTEP: float = 0.001  # seconds (1000 Hz simulation for maximum accuracy)
     NUM_LAPS: int = 10
     NUM_CARS: int = 24
     RACE_DISTANCE_KM: float = 2.5  # km per lap
