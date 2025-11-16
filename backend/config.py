@@ -346,7 +346,7 @@ class TrackConfig:
 class SimulationConfig:
     """Simulation runtime parameters"""
     
-    TIMESTEP: float = 0.001  # seconds (1000 Hz simulation for maximum accuracy)
+    TIMESTEP: float = 0.5  # seconds (1000 Hz simulation for maximum accuracy)
     NUM_LAPS: int = 10
     NUM_CARS: int = 24
     RACE_DISTANCE_KM: float = 2.5  # km per lap
