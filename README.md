@@ -492,11 +492,9 @@ def calculate_overtake_probability(attacker, defender, segment):
 1. **DRS-style overtake**: Faster car (5 m/s advantage) on straight with attack mode
 
    - Probability: ~85%
-
 2. **Bold corner overtake**: Equal speed but fresh tires vs worn tires
 
    - Probability: ~30-40%
-
 3. **Impossible overtake**: Slower car, no attack mode, defending in corner
 
    - Probability: ~5%
@@ -568,11 +566,11 @@ def calculate_energy_consumption(car, throttle, brake, dt):
 
 | Battery % | Lap Progress | Strategy           | Throttle Modifier |
 | --------- | ------------ | ------------------ | ----------------- |
-| < 15%     | Any          | Emergency conserve | 0.92×             |
-| 15-30%    | < 50%        | Conservative       | 0.95×             |
-| 30-50%    | Any          | Neutral            | 1.00×             |
-| > 50%     | > 70%        | Aggressive push    | 1.05×             |
-| > 70%     | > 80%        | All-out attack     | 1.10×             |
+| < 15%     | Any          | Emergency conserve | 0.92×            |
+| 15-30%    | < 50%        | Conservative       | 0.95×            |
+| 30-50%    | Any          | Neutral            | 1.00×            |
+| > 50%     | > 70%        | Aggressive push    | 1.05×            |
+| > 70%     | > 80%        | All-out attack     | 1.10×            |
 
 #### Temperature Management
 
@@ -1052,7 +1050,7 @@ Example penalty scenarios:
 
 | Infraction           | Penalty     | Typical Time Cost | Strategic Impact |
 | -------------------- | ----------- | ----------------- | ---------------- |
-| Track limits (3×)    | +5s         | 1-2 positions     | Moderate         |
+| Track limits (3×)   | +5s         | 1-2 positions     | Moderate         |
 | Unsafe overtake      | +10s        | 2-4 positions     | Severe           |
 | Causing collision    | +10s or DSQ | Race ending       | Critical         |
 | Energy limit breach  | DSQ         | Excluded          | Race ending      |
@@ -1175,14 +1173,13 @@ def calculate_qualifying_lap_time(driver, track):
    - Elite drivers: 1.02-1.05 (2-5% faster)
    - Average drivers: 0.98-1.02 (baseline)
    - Slower drivers: 0.90-0.98 (2-10% slower)
-
 2. **Consistency** (0.85 - 0.98):
 
    - High consistency (0.95+): Lap times within 0.3s
    - Medium consistency (0.90): Lap times vary by 0.5-0.8s
    - Low consistency (0.85): Lap times vary by 1.0-1.5s
-
 3. **Qualifying Boost** (2% faster):
+
    - No energy management concerns
    - Full attack mode throughout
    - Maximum risk taking
@@ -1306,10 +1303,10 @@ Grid Spread: 3.422s (pole to last)
 
 | Position Gap | Time Delta | Percentage |
 | ------------ | ---------- | ---------- |
-| P1 → P2      | 0.1-0.3s   | 0.1-0.3%   |
-| P1 → P5      | 0.5-0.8s   | 0.5-0.9%   |
-| P1 → P10     | 1.0-1.5s   | 1.1-1.7%   |
-| P1 → P20     | 2.5-4.0s   | 2.8-4.5%   |
+| P1 → P2     | 0.1-0.3s   | 0.1-0.3%   |
+| P1 → P5     | 0.5-0.8s   | 0.5-0.9%   |
+| P1 → P10    | 1.0-1.5s   | 1.1-1.7%   |
+| P1 → P20    | 2.5-4.0s   | 2.8-4.5%   |
 
 **Performance Distribution:**
 
@@ -1357,8 +1354,8 @@ race_engine = FormulaERaceEngine(
 
 **Key Differences:**
 
-| Aspect          | Qualifying        | Race                  |
-| --------------- | ----------------- | --------------------- |
+| Aspect                | Qualifying        | Race                  |
+| --------------------- | ----------------- | --------------------- |
 | **Duration**    | Single lap (~90s) | 40+ laps (45+ min)    |
 | **Energy**      | No conservation   | Critical management   |
 | **Tires**       | Fresh, optimal    | Degrading over time   |
@@ -1915,8 +1912,6 @@ class CarState:
 
 ## 🚀 Future Roadmap
 
-### Version 2.0 (Q2 2025)
-
 #### Reinforcement Learning Integration
 
 - **PPO (Proximal Policy Optimization)** agents for driver behavior
@@ -1941,8 +1936,6 @@ class CarState:
 - **Brake failures**: Reduced braking effectiveness
 - **Sensor failures**: Partial state observability for RL agents
 
-### Version 2.5 (Q3 2025)
-
 #### Multi-Series Support
 
 - **MotoGP**: Two-wheeled dynamics with lean angles
@@ -1956,8 +1949,6 @@ class CarState:
 - **Thermal imaging**: Tire and brake temperature heatmaps
 - **Energy flow diagrams**: Sankey diagrams for power distribution
 - **Predictive analytics**: Lap time prediction, tire life estimation
-
-### Version 3.0 (Q4 2025)
 
 #### Realistic Track Evolution
 
