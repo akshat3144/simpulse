@@ -66,7 +66,7 @@ class PhysicsConfig:
     
     # Attack mode (official Formula E rules)
     ATTACK_MODE_POWER_BOOST_KW: float = 50.0  # 350kW -> 400kW (Gen3)
-    ATTACK_MODE_DURATION_SEC: float = 240.0  # 4 minutes per activation
+    ATTACK_MODE_DURATION_SEC: float = 40.0  # 4 minutes per activation
     ATTACK_MODE_ACTIVATIONS: int = 2  # 2 activations per race (typical)
     ATTACK_MODE_MIN_DURATION: float = 120.0  # Minimum 2 minutes
     ATTACK_MODE_SPEED_BOOST: float = 1.08  # ~8% speed increase

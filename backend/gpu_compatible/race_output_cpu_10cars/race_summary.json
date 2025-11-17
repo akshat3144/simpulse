@@ -1,0 +1,121 @@
+{
+  "race_statistics": {
+    "total_steps": 223505,
+    "simulation_time": 223.505,
+    "real_time": 15.380300760269165,
+    "speedup": 14.531900479954498,
+    "device": "CPU"
+  },
+  "final_standings": [
+    {
+      "car_id": 9,
+      "driver_name": "Driver 9",
+      "team": "Team D",
+      "position": 1,
+      "laps_completed": 5,
+      "total_distance": 9738.3271484375,
+      "total_time": 224.12205505371094,
+      "battery_remaining": 73.31416383795428,
+      "tire_degradation": 0.002021046355366707
+    },
+    {
+      "car_id": 3,
+      "driver_name": "Driver 3",
+      "team": "Team C",
+      "position": 2,
+      "laps_completed": 4,
+      "total_distance": 9716.5615234375,
+      "total_time": 224.12205505371094,
+      "battery_remaining": 73.41265849565022,
+      "tire_degradation": 0.0020206000190228224
+    },
+    {
+      "car_id": 5,
+      "driver_name": "Driver 5",
+      "team": "Team E",
+      "position": 3,
+      "laps_completed": 4,
+      "total_distance": 9708.123046875,
+      "total_time": 224.12205505371094,
+      "battery_remaining": 73.45881994434988,
+      "tire_degradation": 0.002020304324105382
+    },
+    {
+      "car_id": 6,
+      "driver_name": "Driver 6",
+      "team": "Team A",
+      "position": 4,
+      "laps_completed": 4,
+      "total_distance": 9664.64453125,
+      "total_time": 224.12205505371094,
+      "battery_remaining": 73.6312152170959,
+      "tire_degradation": 0.0020196903496980667
+    },
+    {
+      "car_id": 8,
+      "driver_name": "Driver 8",
+      "team": "Team C",
+      "position": 5,
+      "laps_completed": 4,
+      "total_distance": 9656.6044921875,
+      "total_time": 224.12205505371094,
+      "battery_remaining": 73.68664797594187,
+      "tire_degradation": 0.002019499661400914
+    },
+    {
+      "car_id": 10,
+      "driver_name": "Driver 10",
+      "team": "Team E",
+      "position": 6,
+      "laps_completed": 4,
+      "total_distance": 9639.619140625,
+      "total_time": 224.12205505371094,
+      "battery_remaining": 73.72052423600482,
+      "tire_degradation": 0.0020193946547806263
+    },
+    {
+      "car_id": 2,
+      "driver_name": "Driver 2",
+      "team": "Team B",
+      "position": 7,
+      "laps_completed": 4,
+      "total_distance": 9628.4990234375,
+      "total_time": 224.12205505371094,
+      "battery_remaining": 73.8051752235991,
+      "tire_degradation": 0.0020191241055727005
+    },
+    {
+      "car_id": 4,
+      "driver_name": "Driver 4",
+      "team": "Team D",
+      "position": 8,
+      "laps_completed": 4,
+      "total_distance": 9622.0439453125,
+      "total_time": 224.12205505371094,
+      "battery_remaining": 73.83729773031153,
+      "tire_degradation": 0.002019015606492758
+    },
+    {
+      "car_id": 7,
+      "driver_name": "Driver 7",
+      "team": "Team B",
+      "position": 9,
+      "laps_completed": 4,
+      "total_distance": 9589.1357421875,
+      "total_time": 224.12205505371094,
+      "battery_remaining": 74.08005968778971,
+      "tire_degradation": 0.002018480561673641
+    },
+    {
+      "car_id": 1,
+      "driver_name": "Driver 1",
+      "team": "Team A",
+      "position": 10,
+      "laps_completed": 4,
+      "total_distance": 9574.359375,
+      "total_time": 224.12205505371094,
+      "battery_remaining": 74.20454243757632,
+      "tire_degradation": 0.0020182905718684196
+    }
+  ]
+}
